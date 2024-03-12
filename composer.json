@@ -1,0 +1,97 @@
+{
+    "name": "hughcube/demo",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "MIT",
+    "links": [
+        "https://github.com/laravel/laravel/blob/10.x/composer.json"
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*",
+        "ext-xhprof": "*",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^10.8",
+        "laravel/sanctum": "^3.2",
+        "laravel/tinker": "^2.8",
+        "hughcube/profiler": "^1.0",
+        "hughcube/laravel-ots": "^1.0",
+        "hughcube/laravel-alifc": "^3.0",
+        "hughcube/laravel-knight": "^5.0",
+        "hughcube/laravel-dingtalk": "^1.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "*",
+        "laravel/pint": "*",
+        "laravel/sail": "*",
+        "mockery/mockery": "*",
+        "nunomaduro/collision": "*",
+        "phpunit/phpunit": "*",
+        "spatie/laravel-ignition": "*",
+        "reliese/laravel": "*",
+        "barryvdh/laravel-ide-helper": "*",
+        "jetbrains/phpstorm-attributes": "*",
+        "phpstan/phpstan": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "ide": [
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:eloquent",
+            "@php artisan ide-helper:generate"
+        ],
+        "style": [
+            "phpcbf -p --standard=PSR2 src/ -v",
+            "phpcs -p --standard=PSR2 src/ -v"
+        ],
+        "test": [
+            "phpunit"
+        ],
+        "phpstan": [
+            "phpstan analyse -vvv -l 9 --memory-limit=-1"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

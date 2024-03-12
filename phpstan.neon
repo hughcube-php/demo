@@ -1,0 +1,17 @@
+
+parameters:
+    level: 4
+    paths:
+        - app
+    inferPrivatePropertyTypeFromConstructor: true
+    excludePaths:
+        - app/Models/Base/
+
+    ignoreErrors:
+        - '#.*HughCube\\Laravel\\Knight\\Ide\\Http\\KIdeRequest.*#'
+        - '#Call to an undefined method Illuminate\\Http\\Request::getClientPlatform\(.*#'
+        - '#Call to an undefined method Illuminate\\Http\\Request::getClientOs\(.*#'
+        - '#Call to an undefined method Illuminate\\Http\\Request::isLtClientVersion\(.*#'
+        - '#Method App\\Exceptions\\Handler::convertExceptionToResults\(\) return type has no value type specified in iterable type array*#'
+        - '#Method App\\Jobs\\AAAJob::dispatchP\(\) should return Illuminate\\Foundation\\Bus\\PendingDispatch but returns Illuminate\\Foundation\\Bus\\PendingDispatch\|static\(App\\Jobs\\AAAJob\)*#'
+

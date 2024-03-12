@@ -1,0 +1,45 @@
+ARG BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest
+
+#########################################################################################################
+#### 构建镜像
+#########################################################################################################
+FROM ${BASE_IMAGE}
+
+ARG COMPOSER_VERSION="2.6.6"
+
+USER root:root
+
+RUN set -eux; \
+    #
+    # Disable Zend OpCache
+    rm -rf /tmp/opcache && mkdir -p /tmp/opcache && chmod -R 0777 /tmp/opcache; \
+    rm -rf /usr/local/etc/php/conf.d/*opcache.ini && touch /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
+    { \
+        echo "zend_extension=opcache"; \
+        echo "opcache.enable=0"; \
+        echo "opcache.enable_cli=0"; \
+    } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
+    #
+    # Update
+    apt-get update -y; \
+    #
+    # Install Utils
+    apt-get install -y git subversion; \
+    #
+    # Install Zip ext
+    apt-get install -y unzip zip libzip-dev && docker-php-ext-install zip; \
+    #
+    # Install Composer
+    if [ -n "$COMPOSER_VERSION" ]; then \
+        curl -sfL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version="$COMPOSER_VERSION"; \
+    else \
+        curl -sfL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer; \
+    fi; \
+    chmod +x /usr/bin/composer; \
+    #
+    # clean
+    docker-php-source delete; \
+    apt-get autoremove; \
+    apt-get clean
+
+USER www-data:www-data

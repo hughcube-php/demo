@@ -1,0 +1,38 @@
+ARG BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest-composer
+
+
+#########################################################################################################
+#### 开发镜像镜像
+#########################################################################################################
+FROM ${BASE_IMAGE}
+
+USER root:root
+
+RUN set -eux; \
+    apt-get update -y; \
+    #
+    # Install Utils
+    apt-get install -y \
+    vim curl subversion git wget procps telnet iputils-ping apache2-utils \
+    tcpdump tshark ssldump ngrep htop lsof iftop sysstat sysstat nmap dnsutils psmisc traceroute; \
+    #
+    # Install Httpstat
+    apt-get install -y curl; \
+    apt-get install -y python3 && ln -s /usr/bin/python3 /usr/bin/python; \
+    curl -o /usr/local/bin/httpstat https://raw.githubusercontent.com/reorx/httpstat/master/httpstat.py; \
+    chmod +x /usr/local/bin/httpstat; \
+    #
+    # Install Httpflow \
+    apt-get install -y curl libpcap-dev zlib1g-dev libpcre3 libpcre3-dev; \
+    git clone https://github.com/six-ddc/httpflow /opt/httpflow; \
+    cd /opt/httpflow && make && make install; \
+    rm -rf /opt/httpflow; \
+    #
+    # clean
+    docker-php-source delete; \
+    apt-get autoremove; \
+    apt-get clean
+
+COPY php/php.ini-development /usr/local/etc/php/php.ini
+
+USER www-data:www-data

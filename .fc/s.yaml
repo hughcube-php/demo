@@ -1,0 +1,65 @@
+edition: 3.0.0
+name: fc3-example
+access: default
+resources:
+  fcDemo:
+    component: fc3
+    props:
+      region: cn-hangzhou
+      handler: index.handler
+      role: ''
+      nasConfig:
+        groupId: 0
+        mountPoints:
+          - enableTLS: false
+            serverAddr: 0a87748149-tac66.cn-hangzhou.nas.aliyuncs.com:/fc/demo
+            mountDir: /data/app/storage
+        userId: 0
+      description: ''
+      timeout: 30
+      diskSize: 512
+      internetAccess: true
+      logConfig:
+        enableRequestMetrics: true
+        enableInstanceMetrics: true
+        logBeginRule: DefaultRegex
+        project: hzcube
+        logstore: alifc
+      functionName: demo
+      runtime: custom-container
+      cpu: 0.25
+      customContainerConfig:
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-2375726-245
+        port: 9000
+        entrypoint: []
+        command: []
+      instanceConcurrency: 3
+      memorySize: 640
+      vpcConfig:
+        securityGroupId: sg-bp108gjkf2lbxmiu97ky
+        vpcId: vpc-bp1ocd7qlrygsh2cbcjyv
+        vSwitchIds:
+          - vsw-bp1q51704xlw6mg5fcogo
+      triggers:
+        - triggerConfig:
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - HEAD
+              - PATCH
+            authType: function
+            disableURLInternet: true
+          triggerName: http
+          qualifier: LATEST
+          triggerType: http
+        - triggerConfig:
+            payload: >-
+              {"uuid":"a1203f7b-2877-43e8-88bb-3620331fe9a7","displayName":"App\\Jobs\\AAAScheduleJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\AAAScheduleJob","command":"O:23:\"App\\Jobs\\AAAScheduleJob\":0:{}"},"createdAt":"2023-12-28T09:25:05.768148+08:00"}
+            cronExpression: CRON_TZ=Asia/Shanghai 0 * * * * *
+            enable: true
+          triggerName: schedule
+          qualifier: LATEST
+          triggerType: timer

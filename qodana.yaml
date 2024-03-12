@@ -1,0 +1,7 @@
+# qodana scan --show-report
+version: "1.0"
+linter: jetbrains/qodana-php:2021.3-eap
+exclude:
+  - name: All
+    paths:
+      - _ide_helper.php
