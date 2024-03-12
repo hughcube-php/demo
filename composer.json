@@ -14,12 +14,10 @@
         "php": "^8.3",
         "ext-pdo": "*",
         "ext-xhprof": "*",
-        "guzzlehttp/guzzle": "^7.2",
+        "laravel/tinker": "^2.8",
         "laravel/framework": "^10.8",
         "laravel/sanctum": "^3.2",
-        "laravel/tinker": "^2.8",
         "hughcube/profiler": "^1.0",
-        "hughcube/laravel-ots": "^1.0",
         "hughcube/laravel-alifc": "^3.0",
         "hughcube/laravel-knight": "^5.0",
         "hughcube/laravel-dingtalk": "^1.0"
@@ -32,10 +30,10 @@
         "nunomaduro/collision": "*",
         "phpunit/phpunit": "*",
         "spatie/laravel-ignition": "*",
+        "phpstan/phpstan": "*",
         "reliese/laravel": "*",
         "barryvdh/laravel-ide-helper": "*",
-        "jetbrains/phpstorm-attributes": "*",
-        "phpstan/phpstan": "*"
+        "jetbrains/phpstorm-attributes": "*"
     },
     "autoload": {
         "psr-4": {
