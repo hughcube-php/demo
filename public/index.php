@@ -6,7 +6,7 @@ use HughCube\PUrl\Url as PUrl;
 use Illuminate\Contracts\Http\Kernel;
 
 /** Enable Profiler */
-if (define('PROFILER_ENABLE', rand(0, 100) < 5) && PROFILER_ENABLE) {
+if (define('PROFILER_ENABLE', rand(0, 100) < 5) && PROFILER_ENABLE && '1' === ($_GET['profiler_enable'] ?? '1')) {
     xhprof_enable(XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
 }
 
