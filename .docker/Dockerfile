@@ -1,68 +1,67 @@
-ARG BASE_IMAGE=php:8.3-apache
+ARG BASE_IMAGE=php:8.3.2-cli-alpine3.18
 
 
 #########################################################################################################
-#### 实际基础镜像
+#### 时区
+#########################################################################################################
+FROM ${BASE_IMAGE} AS TzBuilder
+
+RUN apk update && apk add tzdata
+
+
+#########################################################################################################
+#### 运行基础镜像
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ENV TZ=Asia/Shanghai
+ARG SWOOLE_VERSION=v5.1.2
+ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
-ENV APACHE_RUN_USER         www-data
-ENV APACHE_RUN_GROUP        www-data
+ENV LARAVEL_OCTANE                  1
+ENV OCTANE_STATE_FILE               /tmp/octane-server-state.json
+ENV APP_BASE_PATH                   /data/app
+ENV APP_LOG_PATH                    /data/logs
 
-ENV APP_DIR                 /data/app
-ENV APP_WEB_DIR             ${APP_DIR}/public
-
-USER root:root
-WORKDIR ${APP_DIR}
+COPY --from=TzBuilder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN set -eux; \
-    apt-get update; \
     #
-    # Enable apache modules
-    a2enmod rewrite headers; \
+    # Update and install build dependencies
+    apk update; \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
     #
-    # Disable apache modules
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/alias.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/alias.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/autoindex.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/autoindex.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/deflate.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/deflate.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/auth_basic.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/auth_basic.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/authn_core.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/authn_core.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/authn_file.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/authn_file.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/authz_host.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/authz_host.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/authz_user.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/authz_user.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/env.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/env.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/mime.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/mime.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/negotiation.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/negotiation.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/status.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/status.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/access_compat.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/access_compat.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/reqtimeout.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/reqtimeout.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/filter.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/filter.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/setenvif.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/setenvif.load; \
-    rm -rf ${APACHE_CONFDIR}/mods-enabled/headers.conf && rm -rf ${APACHE_CONFDIR}/mods-enabled/headers.load; \
-    rm -rf ${APACHE_CONFDIR}/conf-enabled/other-vhosts-access-log.conf; \
-    #
-    # 清除监听的端口
-    echo > /etc/apache2/ports.conf; \
-    #
-    # Install BCMath ext
-    docker-php-ext-install bcmath; \
-    #
-    # Install pcntl ext
+    # Install Pcntl
     docker-php-ext-install pcntl; \
     #
-    # Install pdo_mysql ext
+    # Install BCMath
+    docker-php-ext-install bcmath; \
+    #
+    # Install PDO_MYSQL
     docker-php-ext-install pdo_mysql; \
     #
     # Install xhprof ext
     pecl install xhprof && docker-php-ext-enable xhprof; \
     #
-    # Install GMP ext
-    apt-get install -y libgmp-dev && docker-php-ext-install gmp; \
-    #
     # Install APCU ext
     pecl install apcu && docker-php-ext-enable apcu; \
+    #
+    # Install GMP
+    apk add --no-cache gmp-dev && docker-php-ext-install gmp; \
+    #
+    # Install Swoole \
+    apk add --no-cache libstdc++ libpq; \
+    apk add --no-cache --virtual .build-deps .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
+    docker-php-ext-install sockets; \
+    docker-php-source extract; \
+    mkdir /usr/src/php/ext/swoole; \
+    curl -sfL https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz; \
+    tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/swoole; \
+    if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
+        sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
+    fi; \
+    docker-php-ext-configure swoole --enable-mysqlnd --enable-openssl --enable-sockets --enable-swoole-curl; \
+    docker-php-ext-install -j$(nproc) swoole; \
+    rm -f swoole.tar.gz && docker-php-source delete && apk del --no-network .build-deps-ext-swoole;  \
     #
     # Install Zend OpCache \
     docker-php-ext-enable opcache;  \
@@ -89,29 +88,27 @@ RUN set -eux; \
         echo "opcache.file_cache_consistency_checks=0"; \
         echo "opcache.validate_permission=0"; \
         echo "opcache.huge_code_pages=1"; \
-        echo "opcache.preload=/data/app/preload.php"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
-        echo "opcache.error_log=/data/app/storage/logs/php-opcache-error.log"; \
+        echo "opcache.error_log=${APP_LOG_PATH}/php-opcache-error.log"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
-    mkdir -p "${APP_DIR}" && echo "<?php " > "${APP_DIR}/preload.php"; \
-    chown -R www-data:www-data "${APP_DIR}"; \
     #
     # Log Dir
-    mkdir -p /data/app/storage/logs; \
-    chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /data/app/storage/logs; \
+    mkdir -p "${APP_LOG_PATH}"; \
     #
-    # phpinfo
-    mkdir -p "${APP_WEB_DIR}" && echo "<?php phpinfo();" > "${APP_WEB_DIR}/index.php"; \
-    chown -R www-data:www-data "${APP_WEB_DIR}"; \
-    #
-    # clean
-    docker-php-source delete; \
-    apt-get autoremove; \
-    apt-get clean
+    # Clear \
+    #pecl clear-cache && \
+    rm -rf "/tmp/opcache/*" && \
+    docker-php-source delete && \
+    apk del --no-network .build-deps
 
-COPY apache/sites-enabled/000-default.conf ${APACHE_CONFDIR}/sites-enabled/000-default.conf
-COPY php/php.ini-production /usr/local/etc/php/php.ini
+WORKDIR ${APP_BASE_PATH}
 
-EXPOSE 9000
-USER www-data:www-data
+CMD /usr/local/bin/php \
+    -d variables_order=EGPCS \
+    -d realpath_cache_size=16M \
+    -d realpath_cache_ttl=86400 \
+    -d expose_php = Off \
+    -d error_reporting = E_ALL \
+    -d error_log = ${APP_LOG_PATH}/php-error.log \
+    ${APP_BASE_PATH}/vendor/bin/swoole-server ${OCTANE_STATE_FILE}
