@@ -50,7 +50,7 @@ RUN set -eux; \
     #
     # Install Swoole \
     apk add --no-cache libstdc++ libpq; \
-    apk add --no-cache --virtual .build-deps .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
+    apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
     docker-php-ext-install sockets; \
     docker-php-source extract; \
     mkdir /usr/src/php/ext/swoole; \
