@@ -13,7 +13,7 @@ resources:
         mountPoints:
           - enableTLS: false
             serverAddr: 0a87748149-tac66.cn-hangzhou.nas.aliyuncs.com:/fc/demo
-            mountDir: /data/app/storage
+            mountDir: /data/logs
         userId: 0
       description: ''
       timeout: 30
