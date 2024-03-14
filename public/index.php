@@ -1,5 +1,5 @@
 <?php
-
+die;
 use App\Http\Request;
 use HughCube\Profiler\HProfiler;
 use HughCube\PUrl\Url as PUrl;
