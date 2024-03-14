@@ -30,7 +30,7 @@ resources:
       cpu: 0.25
       customContainerConfig:
         image: registry-vpc.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-2375726-245
-        port: 9000
+        port: 80
         entrypoint: []
         command: []
       instanceConcurrency: 3

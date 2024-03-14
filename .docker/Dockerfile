@@ -17,10 +17,12 @@ FROM ${BASE_IMAGE}
 ARG SWOOLE_VERSION=v5.1.2
 ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
-ENV LARAVEL_OCTANE                  1
-ENV OCTANE_STATE_FILE               /tmp/octane-server-state.json
 ENV APP_BASE_PATH                   /data/app
+ENV APP_STORAGE_PATH                ${APP_BASE_PATH}/storage
 ENV APP_LOG_PATH                    /data/logs
+
+ENV LARAVEL_OCTANE                  1
+ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/logs/octane-server-state.json
 
 COPY --from=TzBuilder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 

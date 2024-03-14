@@ -23,6 +23,9 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 /** 命令行工具 */
 $app->register(\Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class);
 
+/** Octane */
+$app->register(\HughCube\Laravel\Octane\ServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Run The Artisan Application

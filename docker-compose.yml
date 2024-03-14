@@ -9,17 +9,15 @@ networks:
 services:
   app:
     image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest-developer
-    container_name: demo-app
     ports:
-      - "9091:9000"
+      - "9091:80"
     #user: root:root
     environment:
         HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
+    command: /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80
     volumes:
       - .:/data/app:rw
-      - .docker/apache/sites-enabled/000-default.conf:/etc/apache2/sites-enabled/000-default.conf:r
-      - .docker/php/php.ini-development:/usr/local/etc/php/php.ini:r
-      - home-volume:/var/www/:rw
+      - home-volume:/root/:rw
     restart: always
     networks:
       - app
