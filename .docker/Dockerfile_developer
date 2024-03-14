@@ -9,10 +9,12 @@ FROM ${BASE_IMAGE}
 USER root:root
 
 RUN set -eux; \
-    apt-get update -y; \
+    #
+    # Update
+    apk update; \
     #
     # Install Utils
-    apt-get install -y \
+    apk add --no-cache \
     vim curl subversion git wget procps telnet iputils-ping apache2-utils \
     tcpdump tshark ssldump ngrep htop lsof iftop sysstat sysstat nmap dnsutils psmisc traceroute; \
     #

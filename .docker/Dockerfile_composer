@@ -5,9 +5,7 @@ ARG BASE_IMAGE=registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ARG COMPOSER_VERSION="2.6.6"
-
-USER root:root
+ARG COMPOSER_VERSION="2.7.2"
 
 RUN set -eux; \
     #
@@ -21,13 +19,19 @@ RUN set -eux; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
     #
     # Update
-    apt-get update -y; \
+    apk update; \
     #
-    # Install Utils
-    apt-get install -y git subversion; \
+    # Install git
+    apk add --no-cache git; \
+    #
+    # Install subversion
+    apk add --no-cache subversion; \
     #
     # Install Zip ext
-    apt-get install -y unzip zip libzip-dev && docker-php-ext-install zip; \
+    apk add --no-cache libzip-dev; \
+    apk add --no-cache --virtual .build-deps-ext-zip zlib-dev; \
+    docker-php-ext-install zip; \
+    apk del --no-network .build-deps-ext-zip; \
     #
     # Install Composer
     if [ -n "$COMPOSER_VERSION" ]; then \
@@ -37,9 +41,10 @@ RUN set -eux; \
     fi; \
     chmod +x /usr/bin/composer; \
     #
-    # clean
-    docker-php-source delete; \
-    apt-get autoremove; \
-    apt-get clean
+    # Clear \
+    #pecl clear-cache && \
+    rm -rf "/tmp/opcache/*" && \
+    docker-php-source delete && \
+    apk del --no-network .build-deps
 
-USER www-data:www-data
+CMD /usr/bin/composer
