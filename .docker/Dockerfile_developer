@@ -12,29 +12,29 @@ RUN set -eux; \
     #
     # Update
     apk update; \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
     #
     # Install Utils
     apk add --no-cache \
-    vim curl subversion git wget procps telnet iputils-ping apache2-utils \
-    tcpdump tshark ssldump ngrep htop lsof iftop sysstat sysstat nmap dnsutils psmisc traceroute; \
+    vim curl subversion git wget procps busybox-extras iputils-ping apache2-utils bind-tools \
+    tcpdump tshark ngrep htop lsof iftop sysstat sysstat nmap psmisc traceroute; \
     #
     # Install Httpstat
-    apt-get install -y curl; \
-    apt-get install -y python3 && ln -s /usr/bin/python3 /usr/bin/python; \
+    apk add --no-cache curl; \
+    apk add --no-cache python3; \
     curl -o /usr/local/bin/httpstat https://raw.githubusercontent.com/reorx/httpstat/master/httpstat.py; \
     chmod +x /usr/local/bin/httpstat; \
     #
     # Install Httpflow \
-    apt-get install -y curl libpcap-dev zlib1g-dev libpcre3 libpcre3-dev; \
+    apk add --no-cache curl libpcap-dev zlib-dev make g++ libpcap-dev libpcre-dev build-base gcc g++ pcre pcre-dev libc6-compat; \
     git clone https://github.com/six-ddc/httpflow /opt/httpflow; \
     cd /opt/httpflow && make && make install; \
     rm -rf /opt/httpflow; \
     #
-    # clean
-    docker-php-source delete; \
-    apt-get autoremove; \
-    apt-get clean
+    # Clear \
+    #pecl clear-cache && \
+    rm -rf "/tmp/opcache/*" && \
+    docker-php-source delete && \
+    apk del --no-network .build-deps
 
-COPY php/php.ini-development /usr/local/etc/php/php.ini
-
-USER www-data:www-data
+CMD /usr/local/bin/php ${APP_BASE_PATH}/artisan serve
