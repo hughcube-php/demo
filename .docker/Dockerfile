@@ -90,8 +90,9 @@ RUN set -eux; \
         echo "opcache.file_cache_consistency_checks=0"; \
         echo "opcache.validate_permission=0"; \
         echo "opcache.huge_code_pages=1"; \
-        echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
+        echo "opcache.preload=${APP_BASE_PATH}/preload.php"; \
         echo "opcache.error_log=${APP_LOG_PATH}/php-opcache-error.log"; \
+        echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
