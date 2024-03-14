@@ -43,6 +43,7 @@ RUN sed -i "/->clearOpcodeCache()/d" "vendor/laravel/octane/src/Swoole/Handlers/
 RUN php -l "vendor/laravel/octane/src/Swoole/Handlers/OnWorkerStart.php"
 
 # 创建 preload.php
+RUN echo "<?php " > preload.php
 #RUN php artisan opcache:create-preload --with_remote_scripts
 #RUN php preload.php
 
