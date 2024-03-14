@@ -107,10 +107,10 @@ RUN set -eux; \
 WORKDIR ${APP_BASE_PATH}
 
 CMD /usr/local/bin/php \
-    -d variables_order=EGPCS \
-    -d realpath_cache_size=16M \
-    -d realpath_cache_ttl=86400 \
-    -d expose_php = Off \
-    -d error_reporting = E_ALL \
-    -d error_log = ${APP_LOG_PATH}/php-error.log \
-    ${APP_BASE_PATH}/vendor/bin/swoole-server ${OCTANE_STATE_FILE}
+        -d variables_order=EGPCS \
+        -d realpath_cache_size=16M \
+        -d realpath_cache_ttl=86400 \
+        -d expose_php=Off \
+        -d error_reporting=E_ALL \
+        -d error_log=${APP_LOG_PATH}/php-error.log \
+        ${APP_BASE_PATH}/vendor/bin/swoole-server ${OCTANE_STATE_FILE}
