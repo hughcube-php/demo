@@ -94,6 +94,7 @@ RUN set -eux; \
         echo "opcache.error_log=${APP_LOG_PATH}/php-opcache-error.log"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
+    mkdir -p "${APP_BASE_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
     # Log Dir
