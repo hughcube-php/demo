@@ -11,10 +11,6 @@ use Laravel\Octane\Events\TickTerminated;
 use Laravel\Octane\Events\WorkerErrorOccurred;
 use Laravel\Octane\Events\WorkerStarting;
 use Laravel\Octane\Events\WorkerStopping;
-use Laravel\Octane\Listeners\FlushTemporaryContainerInstances;
-use Laravel\Octane\Listeners\ReportException;
-use Laravel\Octane\Listeners\StopWorkerIfNecessary;
-use Laravel\Octane\Octane;
 
 return [
 
@@ -95,9 +91,9 @@ return [
         ],
 
         OperationTerminated::class => [
-            #\Laravel\Octane\Listeners\FlushOnce::class,
+            \Laravel\Octane\Listeners\FlushOnce::class,
             \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
-            #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
+            \Laravel\Octane\Listeners\DisconnectFromDatabases::class,
             \Laravel\Octane\Listeners\CollectGarbage::class,
         ],
 
