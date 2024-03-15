@@ -28,9 +28,11 @@ COPY --from=TzBuilder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN set -eux; \
     #
-    # Update and install build dependencies
+    # Update
     apk update; \
-    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
+    #
+    # Install build dependencies
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
     #
     # Install Pcntl
     docker-php-ext-install pcntl; \
@@ -54,16 +56,17 @@ RUN set -eux; \
     apk add --no-cache libstdc++ libpq; \
     apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
     docker-php-ext-install sockets; \
-    docker-php-source extract; \
     mkdir /usr/src/php/ext/swoole; \
     curl -sfL https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz; \
     tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/swoole; \
     if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
         sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
     fi; \
-    docker-php-ext-configure swoole --enable-mysqlnd --enable-openssl --enable-sockets --enable-swoole-curl; \
+    docker-php-ext-configure swoole \
+        --enable-mysqlnd --enable-sockets --enable-swoole-curl \
+    ; \
     docker-php-ext-install -j$(nproc) swoole; \
-    rm -f swoole.tar.gz && docker-php-source delete && apk del --no-network .build-deps-ext-swoole;  \
+    rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
     #
     # Install Zend OpCache \
     docker-php-ext-enable opcache;  \
@@ -97,14 +100,9 @@ RUN set -eux; \
     mkdir -p "${APP_BASE_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
-    # Log Dir
-    mkdir -p "${APP_LOG_PATH}"; \
-    #
     # Clear \
-    #pecl clear-cache && \
-    rm -rf "/tmp/opcache/*" && \
-    docker-php-source delete && \
-    apk del --no-network .build-deps
+    docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
+    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}"
 
 WORKDIR ${APP_BASE_PATH}
 

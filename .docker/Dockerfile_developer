@@ -12,7 +12,9 @@ RUN set -eux; \
     #
     # Update
     apk update; \
-    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
+    #
+    # Install build dependencies
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
     #
     # Install Utils
     apk add --no-cache \
@@ -32,9 +34,7 @@ RUN set -eux; \
     rm -rf /opt/httpflow; \
     #
     # Clear \
-    #pecl clear-cache && \
-    rm -rf "/tmp/opcache/*" && \
-    docker-php-source delete && \
-    apk del --no-network .build-deps
+    docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
+    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}"
 
 CMD /usr/local/bin/php ${APP_BASE_PATH}/artisan serve
