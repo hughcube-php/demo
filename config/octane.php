@@ -215,7 +215,7 @@ return [
             'http_compression' => false,
 
             'log_rotation' => 2, #SWOOLE_LOG_ROTATION_DAILY,
-            'log_file' => log_path('swoole_http.log'),
+            'log_file' => storage_path('logs/swoole_http.log'),
         ]
     ],
 ];
