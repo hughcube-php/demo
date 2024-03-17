@@ -48,6 +48,6 @@ return [
     ],
 
     // 1%的采样率(max: 1000000)
-    'enable.probability' => 1000000 / 10,
+    'enable.probability' => 1000000 / 100,
     'enable' => [],
 ];
