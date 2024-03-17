@@ -14,6 +14,7 @@ services:
     #user: root:root
     environment:
         HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
+        COMPOSER_PROXY: ${COMPOSER_PROXY}
     command: /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80
     volumes:
       - .:/data/app:rw

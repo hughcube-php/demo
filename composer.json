@@ -36,7 +36,8 @@
         "reliese/laravel": "*",
         "swoole/ide-helper": "*",
         "barryvdh/laravel-ide-helper": "*",
-        "jetbrains/phpstorm-attributes": "*"
+        "jetbrains/phpstorm-attributes": "*",
+        "hughcube/composer-proxy-plugin": "*"
     },
     "autoload": {
         "psr-4": {
@@ -90,7 +91,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "hughcube/composer-proxy-plugin": true
         }
     },
     "minimum-stability": "dev",
