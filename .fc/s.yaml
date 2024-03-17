@@ -26,6 +26,10 @@ resources:
         project: hzcube
         logstore: alifc
       functionName: demo
+      instanceLifecycleConfig:
+        preStop:
+          handler: 'true'
+          timeout: 30
       runtime: custom-container
       cpu: 0.25
       customContainerConfig:
