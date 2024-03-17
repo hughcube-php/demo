@@ -14,7 +14,7 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        #\HughCube\Profiler\Laravel\Middleware::class,
+        \HughCube\Profiler\Laravel\Middleware::class,
         \Illuminate\Http\Middleware\HandleCors::class,
     ];
 
