@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use HughCube\Laravel\AliFC\Actions\PreStopAction;
 use HughCube\Laravel\Knight\Database\Listeners\AssertCommittedTransaction;
+use HughCube\Laravel\Knight\Events\ActionProcessed;
+use HughCube\Laravel\Octane\Listeners\WaitTaskComplete as OctaneWaitTaskComplete;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Queue\Events\JobProcessed;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -14,8 +16,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        JobProcessed::class => [
+        ActionProcessed::class => [
             AssertCommittedTransaction::class,
+        ],
+        PreStopAction::class => [
+            OctaneWaitTaskComplete::class,
         ],
     ];
 
