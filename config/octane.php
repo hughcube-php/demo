@@ -208,13 +208,11 @@ return [
 
     'swoole' => [
         'options' => [
-            'reload_async' => true,
-            'max_wait_time' => 600,
             'dispatch_mode' => 3,
-            'send_yield' => false,
+            'max_wait_time' => 600,
             'http_compression' => false,
 
-            'log_rotation' => 2, #SWOOLE_LOG_ROTATION_DAILY,
+            'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
             'log_file' => storage_path('logs/swoole_http.log'),
         ]
     ],
