@@ -32,13 +32,13 @@ resources:
           timeout: 30
       runtime: custom-container
       cpu: 0.15
+      memorySize: 576
       customContainerConfig:
         image: registry-vpc.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-2375726-245
         port: 80
         entrypoint: []
         command: []
       instanceConcurrency: 3
-      memorySize: 640
       vpcConfig:
         securityGroupId: sg-bp108gjkf2lbxmiu97ky
         vpcId: vpc-bp1ocd7qlrygsh2cbcjyv
