@@ -93,7 +93,7 @@ return [
         OperationTerminated::class => [
             \Laravel\Octane\Listeners\FlushOnce::class,
             \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
-            #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
+            \Laravel\Octane\Listeners\DisconnectFromDatabases::class,
             \Laravel\Octane\Listeners\CollectGarbage::class,
         ],
 
@@ -103,7 +103,6 @@ return [
         ],
 
         WorkerStopping::class => [
-            //
         ],
     ],
 
@@ -204,14 +203,16 @@ return [
     |
     */
 
-    'max_execution_time' => intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
+    'max_execution_time' => 0, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
     'swoole' => [
         'options' => [
             'dispatch_mode' => 3,
+            'send_yield' => false,
             'max_wait_time' => 600,
             'http_compression' => false,
 
+            'log_level' => 0, # SWOOLE_LOG_DEBUG
             'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
             'log_file' => storage_path('logs/swoole_http.log'),
         ]
