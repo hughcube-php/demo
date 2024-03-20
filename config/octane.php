@@ -93,7 +93,7 @@ return [
         OperationTerminated::class => [
             \Laravel\Octane\Listeners\FlushOnce::class,
             \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
-            #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
+            \Laravel\Octane\Listeners\DisconnectFromDatabases::class,
             \Laravel\Octane\Listeners\CollectGarbage::class,
         ],
 
