@@ -18,5 +18,9 @@ return [
                 'verify' => empty(env('FC_HTTP_PROXY')),
             ],
         ],
-    ]
+    ],
+
+    'handlers' => [
+        'pre_stop' => \HughCube\Laravel\Octane\Actions\PreStopAction::class,
+    ],
 ];
