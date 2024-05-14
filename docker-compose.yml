@@ -1,5 +1,3 @@
-version: '3'
-
 name: demo
 
 networks:
@@ -10,7 +8,7 @@ services:
   app:
     image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest-developer
     ports:
-      - "9091:80"
+      - "5001:80"
     #user: root:root
     environment:
         HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
