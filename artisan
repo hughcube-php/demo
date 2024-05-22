@@ -14,6 +14,8 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 
 $app->register(\Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class);
 
+$app->register(HughCube\Laravel\Octane\ServiceProvider::class);
+
 // Handle the command...
 $status = $app->handleCommand(new ArgvInput);
 
