@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        then: function () {
+        using: function () {
             Route::prefix('api')->middleware('api')->group(base_path('routes/api.php'));
         },
     )
@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /** global middleware */
         $middleware->use([
-            #\HughCube\Profiler\Laravel\Middleware::class,
+            \HughCube\Profiler\Laravel\Middleware::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
