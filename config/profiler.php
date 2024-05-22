@@ -48,6 +48,6 @@ return [
     ],
 
     // 1%的采样率(max: 1000000)
-    'enable.probability' => 1000000 / 100,
+    'enable.probability' => floatval(env('PROFILER_ENABLE_PROBABILITY', 1000000 / 100)),
     'enable' => [],
 ];
