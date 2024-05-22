@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'roadrunner'),
+    'server' => env('OCTANE_SERVER', 'swoole'),
 
     /*
     |--------------------------------------------------------------------------
@@ -131,11 +131,10 @@ return [
     */
 
     'warm' => [
-        ...Octane::defaultServicesToWarm(),
+        ...\Laravel\Octane\Octane::defaultServicesToWarm(),
     ],
 
     'flush' => [
-        //
     ],
 
     /*
@@ -150,10 +149,6 @@ return [
     */
 
     'tables' => [
-        'example:1000' => [
-            'name' => 'string:1000',
-            'votes' => 'int',
-        ],
     ],
 
     /*
@@ -186,7 +181,7 @@ return [
     'watch' => [
         'app',
         'bootstrap',
-        'config',
+        'config/**/*.php',
         'database/**/*.php',
         'public/**/*.php',
         'resources/**/*.php',
@@ -219,6 +214,18 @@ return [
     |
     */
 
-    'max_execution_time' => 30,
+    'max_execution_time' => 0, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
+    'swoole' => [
+        'options' => [
+            'dispatch_mode' => 3,
+            'send_yield' => false,
+            'max_wait_time' => 600,
+            'http_compression' => false,
+
+            'log_level' => 0, # SWOOLE_LOG_DEBUG
+            'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
+            'log_file' => storage_path('logs/swoole_http.log'),
+        ]
+    ],
 ];

@@ -4,7 +4,7 @@ namespace App\Http\Api\Controllers;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class HelloWorldAAAController extends AAAController
+class HelloWorldController extends AAAController
 {
     /**
      * {@inheritDoc}
