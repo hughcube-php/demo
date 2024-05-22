@@ -12,7 +12,6 @@ use Exception;
 use HughCube\Laravel\Knight\Database\Eloquent\Traits\Model as KnightModel;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $data_version
@@ -34,10 +33,7 @@ trait AAATrait
 
     public function getCache(): ?Repository
     {
-        /** @var null|string $driver */
-        $driver = config('cache.model_cache_driver') ?: null;
-
-        return empty($driver) ? null : Cache::store($driver);
+        return null;
     }
 
     /**

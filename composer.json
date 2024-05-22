@@ -1,11 +1,8 @@
 {
     "name": "hughcube/demo",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": [
-        "framework",
-        "laravel"
-    ],
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "links": [
         "https://github.com/laravel/laravel/blob/10.x/composer.json"
@@ -14,14 +11,14 @@
         "php": "^8.3",
         "ext-pdo": "*",
         "ext-xhprof": "*",
-        "laravel/tinker": "^2.8",
+        "laravel/tinker": "^2.9",
         "laravel/octane": "^2.3",
-        "laravel/sanctum": "^3.2",
-        "laravel/framework": "^10.8",
+        "laravel/sanctum": "^4.0",
+        "laravel/framework": "^11.0",
         "hughcube/profiler": "^1.0",
         "hughcube/laravel-octane": "^2.0",
         "hughcube/laravel-alifc": "^3.0",
-        "hughcube/laravel-knight": "^5.0",
+        "hughcube/laravel-knight": "^5.1",
         "hughcube/laravel-dingtalk": "^1.0"
     },
     "require-dev": {
@@ -63,7 +60,9 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
         ],
         "ide": [
             "@php artisan ide-helper:meta",
@@ -87,6 +86,7 @@
         }
     },
     "config": {
+        "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
@@ -95,6 +95,6 @@
             "hughcube/composer-proxy-plugin": true
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

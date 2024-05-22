@@ -11,6 +11,17 @@ use Laravel\Octane\Events\TickTerminated;
 use Laravel\Octane\Events\WorkerErrorOccurred;
 use Laravel\Octane\Events\WorkerStarting;
 use Laravel\Octane\Events\WorkerStopping;
+use Laravel\Octane\Listeners\CloseMonologHandlers;
+use Laravel\Octane\Listeners\CollectGarbage;
+use Laravel\Octane\Listeners\DisconnectFromDatabases;
+use Laravel\Octane\Listeners\EnsureUploadedFilesAreValid;
+use Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved;
+use Laravel\Octane\Listeners\FlushOnce;
+use Laravel\Octane\Listeners\FlushTemporaryContainerInstances;
+use Laravel\Octane\Listeners\FlushUploadedFiles;
+use Laravel\Octane\Listeners\ReportException;
+use Laravel\Octane\Listeners\StopWorkerIfNecessary;
+use Laravel\Octane\Octane;
 
 return [
 
@@ -27,7 +38,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'swoole'),
+    'server' => env('OCTANE_SERVER', 'roadrunner'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,13 +66,14 @@ return [
 
     'listeners' => [
         WorkerStarting::class => [
-            \Laravel\Octane\Listeners\EnsureUploadedFilesAreValid::class,
-            \Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved::class,
+            EnsureUploadedFilesAreValid::class,
+            EnsureUploadedFilesCanBeMoved::class,
         ],
 
         RequestReceived::class => [
-            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
-            ...\Laravel\Octane\Octane::prepareApplicationForNextRequest(),
+            ...Octane::prepareApplicationForNextOperation(),
+            ...Octane::prepareApplicationForNextRequest(),
+            //
         ],
 
         RequestHandled::class => [
@@ -69,11 +81,11 @@ return [
         ],
 
         RequestTerminated::class => [
-            #\Laravel\Octane\Listeners\FlushUploadedFiles::class,
+            // FlushUploadedFiles::class,
         ],
 
         TaskReceived::class => [
-            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
+            ...Octane::prepareApplicationForNextOperation(),
             //
         ],
 
@@ -82,7 +94,7 @@ return [
         ],
 
         TickReceived::class => [
-            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
+            ...Octane::prepareApplicationForNextOperation(),
             //
         ],
 
@@ -91,18 +103,19 @@ return [
         ],
 
         OperationTerminated::class => [
-            \Laravel\Octane\Listeners\FlushOnce::class,
-            \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
-            #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
-            \Laravel\Octane\Listeners\CollectGarbage::class,
+            FlushOnce::class,
+            FlushTemporaryContainerInstances::class,
+            // DisconnectFromDatabases::class,
+            // CollectGarbage::class,
         ],
 
         WorkerErrorOccurred::class => [
-            \Laravel\Octane\Listeners\ReportException::class,
-            \Laravel\Octane\Listeners\StopWorkerIfNecessary::class,
+            ReportException::class,
+            StopWorkerIfNecessary::class,
         ],
 
         WorkerStopping::class => [
+            CloseMonologHandlers::class,
         ],
     ],
 
@@ -118,7 +131,7 @@ return [
     */
 
     'warm' => [
-        #...\Laravel\Octane\Octane::defaultServicesToWarm(),
+        ...Octane::defaultServicesToWarm(),
     ],
 
     'flush' => [
@@ -137,6 +150,10 @@ return [
     */
 
     'tables' => [
+        'example:1000' => [
+            'name' => 'string:1000',
+            'votes' => 'int',
+        ],
     ],
 
     /*
@@ -170,13 +187,12 @@ return [
         'app',
         'bootstrap',
         'config',
-        'database',
+        'database/**/*.php',
         'public/**/*.php',
         'resources/**/*.php',
         'routes',
         'composer.lock',
         '.env',
-        'vendor',
     ],
 
     /*
@@ -190,7 +206,7 @@ return [
     |
     */
 
-    'garbage' => intval(env('OCTANE_GARBAGE', 50)),
+    'garbage' => 50,
 
     /*
     |--------------------------------------------------------------------------
@@ -203,18 +219,6 @@ return [
     |
     */
 
-    'max_execution_time' => 0, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
+    'max_execution_time' => 30,
 
-    'swoole' => [
-        'options' => [
-            'dispatch_mode' => 3,
-            'send_yield' => false,
-            'max_wait_time' => 600,
-            'http_compression' => false,
-
-            'log_level' => 0, # SWOOLE_LOG_DEBUG,
-            'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
-            'log_file' => storage_path('logs/swoole_http.log'),
-        ]
-    ],
 ];

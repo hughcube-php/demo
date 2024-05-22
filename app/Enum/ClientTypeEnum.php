@@ -17,9 +17,9 @@ use phpDocumentor\Reflection\Types\Boolean;
  */
 class ClientTypeEnum extends AAAEnum
 {
-    const UNKNOWN = self::ClientTypeEnum_UNKNOWN;
-    const POSTMEN = self::ClientTypeEnum_POSTMEN;
-    const WECHAT_MP = self::ClientTypeEnum_WECHAT_MP;
+    const int UNKNOWN = self::ClientTypeEnum_UNKNOWN;
+    const int POSTMEN = self::ClientTypeEnum_POSTMEN;
+    const int WECHAT_MP = self::ClientTypeEnum_WECHAT_MP;
 
     /**
      * @return array<int|string, array<string, string>>

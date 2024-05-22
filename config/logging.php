@@ -1,8 +1,9 @@
 <?php
 
-use HughCube\Laravel\DingTalk\Log\Handler as DingTalkHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
 
@@ -11,22 +12,13 @@ return [
     | Default Log Channel
     |--------------------------------------------------------------------------
     |
-    | This option defines the default log channel that gets used when writing
-    | messages to the logs. The name specified in this option should match
-    | one of the channels defined in the "channels" configuration array.
+    | This option defines the default log channel that is utilized to write
+    | messages to your logs. The value provided here should match one of
+    | the channels present in the list of "channels" configured below.
     |
     */
 
     'default' => env('LOG_CHANNEL', 'stack'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Application Log Mode
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'path' => env('LOG_PATH'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,84 +31,67 @@ return [
     |
     */
 
-    'deprecations' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+    'deprecations' => [
+        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+        'trace' => env('LOG_DEPRECATIONS_TRACE', false),
+    ],
 
     /*
     |--------------------------------------------------------------------------
     | Log Channels
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the log channels for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
+    | Here you may configure the log channels for your application. Laravel
+    | utilizes the Monolog PHP logging library, which includes a variety
+    | of powerful log handlers and formatters that you're free to use.
     |
     | Available Drivers: "single", "daily", "slack", "syslog",
-    |                    "errorlog", "monolog",
-    |                    "custom", "stack"
+    |                    "errorlog", "monolog", "custom", "stack"
     |
     */
 
     'channels' => [
+
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['error', 'alarm', 'app'],
+            'channels' => explode(',', env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
 
-        'app' => [
-            'driver' => 'daily',
-            //'driver' => 'single',
-            'replace_placeholders' => true,
-            'path' => log_path('laravel-app.log'),
+        'single' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 0,
-        ],
-
-        'schedule' => [
-            'driver' => 'daily',
-            //'driver' => 'single',
             'replace_placeholders' => true,
-            'path' => log_path('laravel-schedule.log'),
-            'level' => env('LOG_LEVEL', 'info'),
-            'days' => 0,
-            'bubble' => false,
         ],
 
-        'queue' => [
+        'daily' => [
             'driver' => 'daily',
-            'days' => 0,
-            'bubble' => false,
+            'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
-            'path' => log_path('laravel-queue.log'),
-            'level' => env('LOG_LEVEL', 'info'),
         ],
 
-        'error' => [
-            'driver' => 'daily',
-            'path' => log_path('laravel-error.log'),
-            'level' => 'warning',
-            'days' => 0,
+        'slack' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => env('LOG_SLACK_USERNAME', 'Laravel Log'),
+            'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
+            'level' => env('LOG_LEVEL', 'critical'),
+            'replace_placeholders' => true,
         ],
 
-        'alarm' => [
+        'papertrail' => [
             'driver' => 'monolog',
-            'level' => 'warning',
-            'handler' => DingTalkHandler::class,
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
             'handler_with' => [
-                'enabled' => env('DING_TALK_ROBOT_ENABLED', true) === true,
-                'robot' => null,
-                'bubble' => false,
+                'host' => env('PAPERTRAIL_URL'),
+                'port' => env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
-        ],
-
-        'stdout' => [
-            'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER'),
-            'with' => [
-                'stream' => 'php://stdout',
-            ],
+            'processors' => [PsrLogMessageProcessor::class],
         ],
 
         'stderr' => [
@@ -127,12 +102,31 @@ return [
             'with' => [
                 'stream' => 'php://stderr',
             ],
+            'processors' => [PsrLogMessageProcessor::class],
+        ],
+
+        'syslog' => [
+            'driver' => 'syslog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
+            'replace_placeholders' => true,
+        ],
+
+        'errorlog' => [
+            'driver' => 'errorlog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
         ],
 
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
+
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
+
     ],
 
 ];

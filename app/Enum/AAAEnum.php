@@ -14,9 +14,9 @@ namespace App\Enum;
 class AAAEnum extends \HughCube\Enum\Enum
 {
     /** 客户端类型 */
-    protected const ClientTypeEnum_UNKNOWN = 10001;
-    protected const ClientTypeEnum_POSTMEN = 10002;
-    protected const ClientTypeEnum_WECHAT_MP = 10003;
+    protected const int ClientTypeEnum_UNKNOWN = 10001;
+    protected const int ClientTypeEnum_POSTMEN = 10002;
+    protected const int ClientTypeEnum_WECHAT_MP = 10003;
 
     /**
      * @param string $type

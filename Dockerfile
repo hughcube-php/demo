@@ -44,7 +44,7 @@ RUN php -l "vendor/laravel/octane/src/Swoole/Handlers/OnWorkerStart.php"
 
 # 创建 preload.php
 RUN echo "<?php " > preload.php
-#RUN php artisan opcache:create-preload --with_remote_scripts
+RUN php artisan opcache:create-preload #--with_remote_scripts
 RUN php preload.php
 
 # 创建数据表
