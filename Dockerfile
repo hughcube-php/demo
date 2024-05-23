@@ -28,6 +28,11 @@ RUN rm -rf /app/bootstrap/cache/*
 RUN composer install --prefer-dist --optimize-autoloader --no-dev --profile
 RUN composer dump-autoload --optimize --classmap-authoritative
 
+# debug
+ARG PROFILER_ENABLE_PROBABILITY=0
+COPY .docker/Worker.php vendor/laravel/octane/src/Worker.php
+COPY .docker/swoole-server vendor/laravel/octane/bin/swoole-server
+
 # 优化框架(\Illuminate\Foundation\Console\OptimizeClearCommand)
 RUN php artisan view:clear && php artisan view:cache
 RUN php artisan event:clear && php artisan event:cache
