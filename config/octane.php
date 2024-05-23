@@ -1,28 +1,5 @@
 <?php
 
-use Laravel\Octane\Contracts\OperationTerminated;
-use Laravel\Octane\Events\RequestHandled;
-use Laravel\Octane\Events\RequestReceived;
-use Laravel\Octane\Events\RequestTerminated;
-use Laravel\Octane\Events\TaskReceived;
-use Laravel\Octane\Events\TaskTerminated;
-use Laravel\Octane\Events\TickReceived;
-use Laravel\Octane\Events\TickTerminated;
-use Laravel\Octane\Events\WorkerErrorOccurred;
-use Laravel\Octane\Events\WorkerStarting;
-use Laravel\Octane\Events\WorkerStopping;
-use Laravel\Octane\Listeners\CloseMonologHandlers;
-use Laravel\Octane\Listeners\CollectGarbage;
-use Laravel\Octane\Listeners\DisconnectFromDatabases;
-use Laravel\Octane\Listeners\EnsureUploadedFilesAreValid;
-use Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved;
-use Laravel\Octane\Listeners\FlushOnce;
-use Laravel\Octane\Listeners\FlushTemporaryContainerInstances;
-use Laravel\Octane\Listeners\FlushUploadedFiles;
-use Laravel\Octane\Listeners\ReportException;
-use Laravel\Octane\Listeners\StopWorkerIfNecessary;
-use Laravel\Octane\Octane;
-
 return [
 
     /*
@@ -47,7 +24,7 @@ return [
     |
     | When this configuration value is set to "true", Octane will inform the
     | framework that all absolute links must be generated using the HTTPS
-    | protocol. Otherwise your links may be generated using plain HTTP.
+    | protocol. Otherwise, your links may be generated using plain HTTP.
     |
     */
 
@@ -65,57 +42,51 @@ return [
     */
 
     'listeners' => [
-        WorkerStarting::class => [
-            EnsureUploadedFilesAreValid::class,
-            EnsureUploadedFilesCanBeMoved::class,
+        \Laravel\Octane\Events\WorkerStarting::class => [
+            \Laravel\Octane\Listeners\EnsureUploadedFilesAreValid::class,
+            \Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved::class,
         ],
 
-        RequestReceived::class => [
-            ...Octane::prepareApplicationForNextOperation(),
-            ...Octane::prepareApplicationForNextRequest(),
-            //
+        \Laravel\Octane\Events\RequestReceived::class => [
+            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
+            ...\Laravel\Octane\Octane::prepareApplicationForNextRequest(),
         ],
 
-        RequestHandled::class => [
-            //
+        \Laravel\Octane\Events\RequestHandled::class => [
         ],
 
-        RequestTerminated::class => [
-            // FlushUploadedFiles::class,
+        \Laravel\Octane\Events\RequestTerminated::class => [
+            //\Laravel\Octane\Listeners\FlushUploadedFiles::class,
         ],
 
-        TaskReceived::class => [
-            ...Octane::prepareApplicationForNextOperation(),
-            //
+        \Laravel\Octane\Events\TaskReceived::class => [
+            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
         ],
 
-        TaskTerminated::class => [
-            //
+        \Laravel\Octane\Events\TaskTerminated::class => [
         ],
 
-        TickReceived::class => [
-            ...Octane::prepareApplicationForNextOperation(),
-            //
+        \Laravel\Octane\Events\TickReceived::class => [
+            ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
         ],
 
-        TickTerminated::class => [
-            //
+        \Laravel\Octane\Events\TickTerminated::class => [
         ],
 
-        OperationTerminated::class => [
-            FlushOnce::class,
-            FlushTemporaryContainerInstances::class,
-            // DisconnectFromDatabases::class,
-            // CollectGarbage::class,
+        \Laravel\Octane\Contracts\OperationTerminated::class => [
+            \Laravel\Octane\Listeners\FlushOnce::class,
+            \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
+            #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
+            #\Laravel\Octane\Listeners\CollectGarbage::class,
         ],
 
-        WorkerErrorOccurred::class => [
-            ReportException::class,
-            StopWorkerIfNecessary::class,
+        \Laravel\Octane\Events\WorkerErrorOccurred::class => [
+            \Laravel\Octane\Listeners\ReportException::class,
+            \Laravel\Octane\Listeners\StopWorkerIfNecessary::class,
         ],
 
-        WorkerStopping::class => [
-            CloseMonologHandlers::class,
+        \Laravel\Octane\Events\WorkerStopping::class => [
+            \Laravel\Octane\Listeners\CloseMonologHandlers::class,
         ],
     ],
 
