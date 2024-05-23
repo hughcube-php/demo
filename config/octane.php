@@ -131,7 +131,7 @@ return [
     */
 
     'warm' => [
-        ...\Laravel\Octane\Octane::defaultServicesToWarm(),
+        #...\Laravel\Octane\Octane::defaultServicesToWarm(),
     ],
 
     'flush' => [
