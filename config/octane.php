@@ -48,6 +48,7 @@ return [
         ],
 
         \Laravel\Octane\Events\RequestReceived::class => [
+            \HughCube\Laravel\Octane\Listeners\PrepareServerVariables::class,
             ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
             ...\Laravel\Octane\Octane::prepareApplicationForNextRequest(),
         ],
