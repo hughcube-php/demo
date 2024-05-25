@@ -10,7 +10,8 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest-developer
     ports:
       - "5001:80"
-    user: root:root
+    #user: root:root
+    #user: www-data:www-data
     environment:
         HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
         COMPOSER_PROXY: ${COMPOSER_PROXY}
