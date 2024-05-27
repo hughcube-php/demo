@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         /** global middleware */
         $middleware->use([
             \HughCube\Profiler\Laravel\Middleware::class,
+            \HughCube\Laravel\Knight\Http\Middleware\TrustProxies::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
