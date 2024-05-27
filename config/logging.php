@@ -1,9 +1,8 @@
 <?php
 
+use HughCube\Laravel\DingTalk\Log\Handler as DingTalkHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
-use Monolog\Handler\SyslogUdpHandler;
-use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
 
@@ -19,6 +18,15 @@ return [
     */
 
     'default' => env('LOG_CHANNEL', 'stack'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Log Mode
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'path' => env('LOG_PATH'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,47 +59,61 @@ return [
     */
 
     'channels' => [
-
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', env('LOG_STACK', 'single')),
+            'channels' => explode(',', env('LOG_STACK', 'error,alarm,app')),
             'ignore_exceptions' => false,
         ],
 
-        'single' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'replace_placeholders' => true,
-        ],
-
-        'daily' => [
+        'error' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => log_path('laravel-error.log'),
+            'level' => 'warning',
+            'days' => 0,
+        ],
+
+        'app' => [
+            'driver' => 'daily',
+            'path' => log_path('laravel-app.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
-            'replace_placeholders' => true,
+            'days' => 0,
         ],
 
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => env('LOG_SLACK_USERNAME', 'Laravel Log'),
-            'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
-            'level' => env('LOG_LEVEL', 'critical'),
-            'replace_placeholders' => true,
+        'alarm' => [
+            'driver' => 'monolog',
+            'level' => 'warning',
+            'handler' => DingTalkHandler::class,
+            'handler_with' => [
+                'enabled' => true === env('DING_TALK_ROBOT_ENABLED', true),
+                'robot' => null,
+                'bubble' => false,
+            ],
         ],
 
-        'papertrail' => [
+        'queue' => [
+            'driver' => 'daily',
+            'path' => log_path('laravel-queue.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 0,
+            'bubble' => false,
+        ],
+
+        'schedule' => [
+            'driver' => 'daily',
+            'path' => log_path('laravel-schedule.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 0,
+            'bubble' => false,
+        ],
+
+        'stdout' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
-            'handler_with' => [
-                'host' => env('PAPERTRAIL_URL'),
-                'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+            'handler' => StreamHandler::class,
+            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
+                'stream' => 'php://stdout',
             ],
-            'processors' => [PsrLogMessageProcessor::class],
         ],
 
         'stderr' => [
@@ -102,31 +124,12 @@ return [
             'with' => [
                 'stream' => 'php://stderr',
             ],
-            'processors' => [PsrLogMessageProcessor::class],
-        ],
-
-        'syslog' => [
-            'driver' => 'syslog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
-            'replace_placeholders' => true,
-        ],
-
-        'errorlog' => [
-            'driver' => 'errorlog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'replace_placeholders' => true,
         ],
 
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
-
-        'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
-        ],
-
     ],
 
 ];
