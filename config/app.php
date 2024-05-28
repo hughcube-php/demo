@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Facade;
-
 return [
 
     /*
@@ -72,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'PRC'),
 
     /*
      |--------------------------------------------------------------------------
@@ -85,7 +82,7 @@ return [
      |
      */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'zh'),
 
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +95,7 @@ return [
     |
     */
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'zh'),
 
     /*
     |--------------------------------------------------------------------------
@@ -111,7 +108,7 @@ return [
     |
     */
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'zh_CN'),
 
     /*
     |--------------------------------------------------------------------------
