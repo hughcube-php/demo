@@ -12,9 +12,11 @@ services:
     ports:
       - "5012:80"
     #user: root:root
-    #user: www-data:www-data
+    user: www-data:www-data
     environment:
         COMPOSER_PROXY: ${COMPOSER_PROXY}
+        COMPOSER_ALLOW_SUPERUSER: 1
+        COMPOSER_HOME: /root/.composer/
     command: sh -c 'until /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
     #command: sh -c 'until /usr/local/bin/php /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=1; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
     volumes:
