@@ -103,7 +103,9 @@ return [
     */
 
     'warm' => [
-        #...\Laravel\Octane\Octane::defaultServicesToWarm(),
+        'events',
+        'validator',
+        ...\Laravel\Octane\Octane::defaultServicesToWarm(),
     ],
 
     'flush' => [
