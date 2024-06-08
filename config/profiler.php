@@ -45,6 +45,7 @@ return [
         'HTTP_X_FC_ACCESS_KEY_ID',
         'HTTP_X_FC_ACCESS_KEY_SECRET',
         'HTTP_X_FC_ACCOUNT_ID',
+        'HTTP_X_FC_SECURITY_TOKEN',
     ],
 
     // 1%的采样率(max: 1000000)

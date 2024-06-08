@@ -32,13 +32,11 @@ resources:
           timeout: 30
       runtime: custom-container
       cpu: 0.25
-      memorySize: 640
       customContainerConfig:
-        image: registry-vpc.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-2375726-245
+        image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-latest
         port: 80
-        entrypoint: []
-        command: []
       instanceConcurrency: 3
+      memorySize: 640
       vpcConfig:
         securityGroupId: sg-bp108gjkf2lbxmiu97ky
         vpcId: vpc-bp1ocd7qlrygsh2cbcjyv
@@ -57,6 +55,7 @@ resources:
             authType: function
             disableURLInternet: true
           triggerName: http
+          description: ''
           qualifier: LATEST
           triggerType: http
         - triggerConfig:
@@ -65,5 +64,10 @@ resources:
             cronExpression: CRON_TZ=Asia/Shanghai 0 * * * * *
             enable: true
           triggerName: schedule
+          description: ''
           qualifier: LATEST
           triggerType: timer
+      asyncInvokeConfig:
+        asyncTask: true
+        maxAsyncEventAgeInSeconds: 86400
+        maxAsyncRetryAttempts: 3
