@@ -11,8 +11,8 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest-developer
     ports:
       - "5012:80"
-    #user: root:root
-    user: www-data:www-data
+    user: root:root
+    #user: www-data:www-data
     environment:
         COMPOSER_PROXY: ${COMPOSER_PROXY}
         COMPOSER_ALLOW_SUPERUSER: 1
