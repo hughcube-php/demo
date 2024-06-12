@@ -32,8 +32,8 @@ return [
     'profiler.flags' => [
         ProfilingFlags::CPU,
         ProfilingFlags::MEMORY,
-        #ProfilingFlags::NO_BUILTINS,
-        #ProfilingFlags::NO_SPANS,
+        ProfilingFlags::NO_BUILTINS,
+        ProfilingFlags::NO_SPANS,
     ],
     'profiler.options' => [],
 
