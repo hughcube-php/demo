@@ -68,4 +68,4 @@ FROM ${BASE_IMAGE}
 
 COPY --from=builder --chown=www-data:www-data ${APP_BASE_PATH} ${APP_BASE_PATH}
 
-RUN php /data/app/artisan opcache:compile-files --with_app_files --with_remote_cached_scripts
+RUN php /data/app/artisan opcache:compile-files --with_app_files #--with_remote_cached_scripts
