@@ -35,6 +35,6 @@ RUN set -eux; \
     #
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}"
+    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}/*"
 
 CMD /usr/local/bin/php ${APP_BASE_PATH}/artisan serve

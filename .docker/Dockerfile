@@ -14,7 +14,7 @@ RUN apk update && apk add tzdata
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ARG SWOOLE_VERSION=v5.1.2
+ARG SWOOLE_VERSION="v5.1.2"
 ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
 ENV APP_BASE_PATH                   /data/app
@@ -95,20 +95,20 @@ RUN set -eux; \
         echo "opcache.error_log=${APP_LOG_PATH}/php-opcache-error.log"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
-    mkdir -p "${APP_BASE_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
+    mkdir -p "${APP_BASE_PATH}" "${APP_LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}"
+    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}/*"
 
 WORKDIR ${APP_BASE_PATH}
 
 CMD /usr/local/bin/php \
+        -d expose_php=Off \
         -d variables_order=EGPCS \
         -d realpath_cache_size=16M \
         -d realpath_cache_ttl=86400 \
-        -d expose_php=Off \
         -d error_reporting=E_ALL \
         -d error_log=${APP_LOG_PATH}/php-error.log \
         ${APP_BASE_PATH}/vendor/bin/swoole-server ${OCTANE_STATE_FILE}

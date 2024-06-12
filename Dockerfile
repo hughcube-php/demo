@@ -42,6 +42,10 @@ RUN php -l "vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlCon
 RUN sed -i "/->clearOpcodeCache()/d" "vendor/laravel/octane/src/Swoole/Handlers/OnWorkerStart.php"
 RUN php -l "vendor/laravel/octane/src/Swoole/Handlers/OnWorkerStart.php"
 
+# 服务初始化就引入autoload.php
+RUN sed -i "/return include __DIR__ .*swoole-server';/i require_once __DIR__ . '\/\.\.\/autoload.php';" "vendor/bin/swoole-server"
+RUN php -l "vendor/bin/swoole-server"
+
 # 创建 preload.php
 RUN echo "<?php " > preload.php
 RUN php artisan opcache:create-preload #--with_remote_scripts
