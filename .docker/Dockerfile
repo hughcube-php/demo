@@ -19,7 +19,8 @@ ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
 ENV APP_BASE_PATH                   /data/app
 ENV APP_STORAGE_PATH                ${APP_BASE_PATH}/storage
-ENV APP_LOG_PATH                    /data/logs
+
+ENV LOG_PATH                    /data/logs
 
 ENV LARAVEL_OCTANE                  1
 ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/logs/octane-server-state.json
@@ -92,15 +93,15 @@ RUN set -eux; \
         echo "opcache.validate_permission=0"; \
         echo "opcache.huge_code_pages=1"; \
         echo "opcache.preload=${APP_BASE_PATH}/preload.php"; \
-        echo "opcache.error_log=${APP_LOG_PATH}/php-opcache-error.log"; \
+        echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
-    mkdir -p "${APP_BASE_PATH}" "${APP_LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
+    mkdir -p "${APP_BASE_PATH}" "${LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${APP_LOG_PATH}/*"
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"
 
 WORKDIR ${APP_BASE_PATH}
 
@@ -110,5 +111,5 @@ CMD /usr/local/bin/php \
         -d realpath_cache_size=16M \
         -d realpath_cache_ttl=86400 \
         -d error_reporting=E_ALL \
-        -d error_log=${APP_LOG_PATH}/php-error.log \
+        -d error_log=${LOG_PATH}/php-error.log \
         ${APP_BASE_PATH}/vendor/bin/swoole-server ${OCTANE_STATE_FILE}

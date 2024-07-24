@@ -22,6 +22,7 @@ services:
     volumes:
         - .:/data/app:rw
         - home-volume:/root/:rw
+        - ./storage/logs:/data/logs:rw
     restart: always
     networks:
       - app
