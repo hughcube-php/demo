@@ -1,7 +1,5 @@
 <?php
 
-use App\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /** global middleware */
         $middleware->use([
+            \HughCube\Laravel\Octane\Middleware\TimeOutGuard::class,
             \HughCube\Profiler\Laravel\Middleware::class,
             \HughCube\Laravel\Knight\Http\Middleware\TrustProxies::class,
             \Illuminate\Http\Middleware\HandleCors::class,
@@ -34,6 +33,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withBindings([
-        ExceptionHandlerContract::class => ExceptionHandler::class,
+        \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class,
     ])
     ->create();

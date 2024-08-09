@@ -16,6 +16,9 @@ RUN set -eux; \
     # Install build dependencies
     apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
     #
+    # Install Chokidar
+    apk add --no-cache npm && npm install -g chokidar; \
+    #
     # Install Utils
     apk add --no-cache \
     vim curl subversion git wget procps busybox-extras iputils-ping apache2-utils bind-tools \
