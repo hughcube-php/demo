@@ -8,6 +8,8 @@ FROM ${BASE_IMAGE}
 
 USER root:root
 
+ENV NODE_PATH "/usr/local/lib/node_modules"
+
 RUN set -eux; \
     #
     # Update
