@@ -14,11 +14,6 @@ class HelloWorldController extends AAAController
      */
     protected function action(): Response
     {
-        //Process::kill(getmypid(), SIGKILL);
-        sleep(10);
-
-        //Process::kill(getmypid(), SIGKILL);
-
         return $this->asResponse(['message' => 'Hello World.']);
     }
 }
