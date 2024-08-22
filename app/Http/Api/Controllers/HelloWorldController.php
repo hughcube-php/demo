@@ -14,6 +14,11 @@ class HelloWorldController extends AAAController
      */
     protected function action(): Response
     {
+        $timeout = $this->getRequest()->get('timeout');
+        if (!empty($timeout)) {
+            usleep($timeout);
+        }
+
         return $this->asResponse(['message' => 'Hello World.']);
     }
 }

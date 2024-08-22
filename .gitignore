@@ -18,3 +18,7 @@ _ide_helper.php
 phpunit.xml
 preload.php
 .phpunit.cache/
+
+/caddy
+frankenphp
+frankenphp-worker.php
