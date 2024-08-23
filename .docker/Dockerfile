@@ -63,7 +63,7 @@ RUN set -eux; \
     if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
         sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
     fi; \
-    docker-php-ext-configure swoole ; \
+    docker-php-ext-configure swoole --enable-debug-log --enable-trace-log; \
     docker-php-ext-install -j$(nproc) swoole; \
     rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
     #
