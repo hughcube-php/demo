@@ -53,20 +53,6 @@ RUN set -eux; \
     # Install GMP
     apk add --no-cache gmp-dev && docker-php-ext-install gmp; \
     #
-    # Install Swoole \
-    apk add --no-cache libstdc++ libpq; \
-    apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
-    docker-php-ext-install sockets; \
-    mkdir /usr/src/php/ext/swoole; \
-    curl -sfL https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz; \
-    tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/swoole; \
-    if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
-        sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
-    fi; \
-    docker-php-ext-configure swoole --enable-debug-log --enable-trace-log; \
-    docker-php-ext-install -j$(nproc) swoole; \
-    rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
-    #
     # Install Zend OpCache \
     docker-php-ext-enable opcache;  \
     rm -rf /tmp/opcache && mkdir -p /tmp/opcache && chmod -R 0777 /tmp/opcache; \
@@ -99,9 +85,26 @@ RUN set -eux; \
     mkdir -p "${APP_BASE_PATH}" "${LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
+    # Install Swoole \
+    apk add --no-cache libstdc++ libpq; \
+    apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
+    docker-php-ext-install sockets; \
+    mkdir /usr/src/php/ext/swoole; \
+    curl -sfL https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz; \
+    tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/swoole; \
+    if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
+        sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
+    fi; \
+    docker-php-ext-configure swoole --enable-debug-log --enable-trace-log; \
+    docker-php-ext-install -j$(nproc) swoole; \
+    rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
+    #
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"; \
+    #
+    # test
+    php -m
 
 WORKDIR ${APP_BASE_PATH}
 
