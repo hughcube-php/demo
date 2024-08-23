@@ -33,7 +33,7 @@ RUN set -eux; \
     # Install Zip ext
     apk add --no-cache libzip-dev; \
     apk add --no-cache --virtual .build-deps-ext-zip zlib-dev; \
-    docker-php-ext-install zip; \
+    #docker-php-ext-install zip; \
     apk del --no-network .build-deps-ext-zip; \
     #
     # Install Composer
