@@ -17,6 +17,7 @@ COPY . .
 
 # 清除框架缓存
 RUN rm -rf /app/bootstrap/cache/*
+RUN find /app -name '.git' | xargs rm -rf
 
 # 使用慧哲镜像
 #RUN composer config --global repositories.hzcube composer https://packagist.x4k.net/composer
