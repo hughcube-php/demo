@@ -45,6 +45,11 @@ RUN php -l "vendor/laravel/octane/src/Swoole/Handlers/OnWorkerStart.php"
 RUN sed -i '/public function canServeRequestAsStaticFile(Request \$request, RequestContext \$context): bool/ {n; s/{/{\n        return false;/}' vendor/laravel/octane/src/Swoole/SwooleClient.php
 RUN php -l vendor/laravel/octane/src/Swoole/SwooleClient.php
 
+# 更加深入的性能采集
+RUN sed -i '111a\        xhprof_enable();' vendor/laravel/octane/bin/swoole-server && php -l vendor/laravel/octane/bin/swoole-server
+RUN sed -i '111a\        return $this;' vendor/hughcube/profiler/src/Profiler.php && php -l vendor/hughcube/profiler/src/Profiler.php
+RUN sed -i "52c\        'enable.probability' => 1000000," config/profiler.php && php -l config/profiler.php
+
 
 # 服务初始化就引入autoload.php
 #RUN sed -i "/return include __DIR__ .*swoole-server';/i require_once __DIR__ . '\/\.\.\/autoload.php';" "vendor/bin/swoole-server"
