@@ -54,7 +54,11 @@ return [
             ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
             ...\Laravel\Octane\Octane::prepareApplicationForNextRequest(),
         ])->diff([
+            \Laravel\Octane\Listeners\FlushArrayCache::class,
             \Laravel\Octane\Listeners\FlushLocaleState::class,
+            \Laravel\Octane\Listeners\EnforceRequestScheme::class,
+            \Laravel\Octane\Listeners\GiveNewRequestInstanceToPaginator::class,
+            \Laravel\Octane\Listeners\EnsureRequestServerPortMatchesScheme::class,
         ])->values()->toArray(),
 
         \Laravel\Octane\Events\RequestHandled::class => [
