@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Collection;
+
 return [
 
     /*
@@ -47,11 +49,13 @@ return [
             \Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved::class,
         ],
 
-        \Laravel\Octane\Events\RequestReceived::class => [
-            \HughCube\Laravel\Octane\Listeners\PrepareServerVariables::class,
+        \Laravel\Octane\Events\RequestReceived::class => Collection::make([
+            #\HughCube\Laravel\Octane\Listeners\PrepareServerVariables::class,
             ...\Laravel\Octane\Octane::prepareApplicationForNextOperation(),
             ...\Laravel\Octane\Octane::prepareApplicationForNextRequest(),
-        ],
+        ])->diff([
+            \Laravel\Octane\Listeners\FlushLocaleState::class,
+        ])->values()->toArray(),
 
         \Laravel\Octane\Events\RequestHandled::class => [
         ],
