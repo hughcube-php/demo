@@ -27,12 +27,6 @@ RUN find /app -name '.git' | xargs rm -rf
 RUN composer install --prefer-dist --optimize-autoloader --no-dev --profile
 RUN composer dump-autoload --optimize --classmap-authoritative
 
-# 优化框架(\Illuminate\Foundation\Console\OptimizeClearCommand)
-RUN php artisan view:clear && php artisan view:cache
-RUN php artisan event:clear && php artisan event:cache
-RUN php artisan route:clear && php artisan route:cache
-RUN php artisan config:clear && php artisan config:cache
-
 # 优化mysql连接慢的问题
 RUN sed -i "/->exec(\"use /d" "vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php"
 RUN php -l "vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php"
@@ -50,10 +44,15 @@ RUN sed -i "111a\        xhprof_enable();" vendor/laravel/octane/bin/swoole-serv
 RUN sed -i "111a\        return \$this;" vendor/hughcube/profiler/src/Profiler.php && php -l vendor/hughcube/profiler/src/Profiler.php
 RUN sed -i "52c\        'enable.probability' => 1000000," config/profiler.php && php -l config/profiler.php
 
-
 # 服务初始化就引入autoload.php
 #RUN sed -i "/return include __DIR__ .*swoole-server';/i require_once __DIR__ . '\/\.\.\/autoload.php';" "vendor/bin/swoole-server"
 #RUN php -l "vendor/bin/swoole-server"
+
+# (一定要在修改代码之后)优化框架(\Illuminate\Foundation\Console\OptimizeClearCommand)
+RUN php artisan view:clear && php artisan view:cache
+RUN php artisan event:clear && php artisan event:cache
+RUN php artisan route:clear && php artisan route:cache
+RUN php artisan config:clear && php artisan config:cache
 
 # 创建 preload.php
 RUN echo "<?php " > preload.php
