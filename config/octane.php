@@ -62,7 +62,6 @@ return [
             \HughCube\Laravel\Octane\Listeners\PrepareServerVariables::class,
             \Laravel\Octane\Listeners\GiveNewRequestInstanceToPaginator::class,
             \Laravel\Octane\Listeners\EnsureRequestServerPortMatchesScheme::class,
-            \Laravel\Octane\Listeners\GiveNewApplicationInstanceToViewFactory::class,
         ])->values()->toArray(),
 
         \Laravel\Octane\Events\RequestHandled::class => [
