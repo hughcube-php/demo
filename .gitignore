@@ -22,3 +22,4 @@ preload.php
 /caddy
 frankenphp
 frankenphp-worker.php
+/tests/KRTest.php
