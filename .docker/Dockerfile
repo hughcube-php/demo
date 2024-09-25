@@ -14,7 +14,7 @@ RUN apk update && apk add tzdata
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ARG SWOOLE_VERSION="5.1.4"
+ARG SWOOLE_VERSION="v5.1.4"
 ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
 ENV APP_BASE_PATH                   /data/app
