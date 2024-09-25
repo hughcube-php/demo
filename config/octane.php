@@ -211,7 +211,7 @@ return [
         'options' => [
             'dispatch_mode' => 3,
             'single_thread' => true,
-            'reactor_num' => 1, #env('OCTANE_MAX_WORKERS', null),
+            'reactor_num' => env('OCTANE_MAX_WORKERS', null),
 
             'max_wait_time' => 600,
             'http_compression' => false,
