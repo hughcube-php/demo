@@ -199,7 +199,7 @@ return [
     |
     */
 
-    'max_execution_time' => 10, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
+    'max_execution_time' => 0, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
     'swoole' => [
         'options' => [
