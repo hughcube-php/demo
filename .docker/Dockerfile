@@ -20,7 +20,7 @@ ARG SWOOLE_HTTP_SERVER_NAME="hz"
 ENV APP_BASE_PATH                   /data/app
 ENV APP_STORAGE_PATH                ${APP_BASE_PATH}/storage
 
-ENV LOG_PATH                    /data/logs
+ENV LOG_PATH                        /data/logs
 
 ENV LARAVEL_OCTANE                  1
 ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/logs/octane-server-state.json
