@@ -199,12 +199,13 @@ return [
     |
     */
 
-    'max_execution_time' => 0, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
+    'max_execution_time' => 10, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
     'swoole' => [
         'options' => [
             'dispatch_mode' => 3,
-            'send_yield' => false,
+            'reactor_num' => env('OCTANE_MAX_WORKERS', null),
+
             'max_wait_time' => 600,
             'http_compression' => false,
 
