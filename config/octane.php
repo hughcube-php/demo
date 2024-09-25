@@ -208,7 +208,7 @@ return [
          * 3: SWOOLE_THREAD
          */
         'mode' => call_user_func(function () {
-            $mode = env('SWOOLE_MODE');
+            $mode = env('SWOOLE_MODE', 'SWOOLE_THREAD');
 
             if (is_string($mode) && !empty($mode) && defined($mode)) {
                 return constant($mode);
