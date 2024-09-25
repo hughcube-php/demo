@@ -207,15 +207,7 @@ return [
          * 2: SWOOLE_PROCESS
          * 3: SWOOLE_THREAD
          */
-        'mode' => call_user_func(function () {
-            $mode = env('SWOOLE_MODE', 'SWOOLE_THREAD');
-
-            if (is_string($mode) && !empty($mode) && defined($mode)) {
-                return constant($mode);
-            }
-
-            return null;
-        }),
+        'mode' => null,
         'options' => [
             'dispatch_mode' => 3,
             'single_thread' => true,
