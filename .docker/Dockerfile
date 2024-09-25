@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=php:8.3.2-cli-alpine3.18
+ARG BASE_IMAGE=php:8.3.8-cli-alpine3.20
 
 
 #########################################################################################################
@@ -14,7 +14,7 @@ RUN apk update && apk add tzdata
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ARG SWOOLE_VERSION="v5.1.4"
+ARG SWOOLE_VERSION="v6.0.0-alpha"
 ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
 ENV APP_BASE_PATH                   /data/app
@@ -95,7 +95,7 @@ RUN set -eux; \
     if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
         sed -i "s/#define SW_HTTP_SERVER_SOFTWARE \"swoole-http-server\"/#define SW_HTTP_SERVER_SOFTWARE \"${SWOOLE_HTTP_SERVER_NAME}\"/"  "/usr/src/php/ext/swoole/include/swoole_config.h"; \
     fi; \
-    docker-php-ext-configure swoole; \
+    docker-php-ext-configure swoole --enable-swoole-thread --enable-iouring; \
     docker-php-ext-install -j$(nproc) swoole; \
     rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
     #
