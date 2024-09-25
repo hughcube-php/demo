@@ -207,10 +207,9 @@ return [
          * 2: SWOOLE_PROCESS
          * 3: SWOOLE_THREAD
          */
-        'mode' => null,
+        'mode' => 1,
         'options' => [
             'dispatch_mode' => 3,
-            'single_thread' => true,
             'reactor_num' => env('OCTANE_MAX_WORKERS', null),
 
             'max_wait_time' => 600,
