@@ -207,7 +207,7 @@ return [
          * 2: SWOOLE_PROCESS
          * 3: SWOOLE_THREAD
          */
-        'mode' => 1,
+        'mode' => null,
         'options' => [
             'dispatch_mode' => 3,
             'reactor_num' => env('OCTANE_MAX_WORKERS', null),
