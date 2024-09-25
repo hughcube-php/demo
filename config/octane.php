@@ -215,7 +215,7 @@ return [
             'max_wait_time' => 600,
             'http_compression' => false,
 
-            'log_level' => SWOOLE_LOG_DEBUG,
+            'log_level' => SWOOLE_LOG_NOTICE,
             'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
             'log_file' => storage_path('logs/swoole_http.log'),
         ]
