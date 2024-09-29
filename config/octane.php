@@ -114,8 +114,8 @@ return [
     */
 
     'warm' => [
-        'events',
-        'validator',
+        #'events',
+        #'validator',
         ...\Laravel\Octane\Octane::defaultServicesToWarm(),
     ],
 
