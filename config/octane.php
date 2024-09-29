@@ -113,11 +113,13 @@ return [
     |
     */
 
-    'warm' => [
-        #'events',
-        #'validator',
-        #...\Laravel\Octane\Octane::defaultServicesToWarm(),
-    ],
+    'warm' => Collection::make([
+        ...\Laravel\Octane\Octane::defaultServicesToWarm(),
+    ])->diff([
+        'cookie',
+        'session',
+        'session.store',
+    ])->values()->all(),
 
     'flush' => [
     ],
