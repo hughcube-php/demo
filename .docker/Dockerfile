@@ -1,10 +1,10 @@
-ARG BASE_IMAGE=php:8.3.8-cli-alpine3.20
+ARG BASE_IMAGE=php:8.4.1-cli-alpine3.20
 
 
 #########################################################################################################
 #### 时区
 #########################################################################################################
-FROM ${BASE_IMAGE} AS TzBuilder
+FROM ${BASE_IMAGE} AS tz-builder
 
 RUN apk update && apk add tzdata
 
@@ -14,7 +14,7 @@ RUN apk update && apk add tzdata
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-ARG SWOOLE_VERSION="v5.1.4"
+ARG SWOOLE_VERSION="v6.0.0"
 ARG SWOOLE_HTTP_SERVER_NAME="hz"
 
 ENV APP_BASE_PATH                   /data/app
@@ -25,7 +25,7 @@ ENV LOG_PATH                        /data/logs
 ENV LARAVEL_OCTANE                  1
 ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/logs/octane-server-state.json
 
-COPY --from=TzBuilder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+COPY --from=tz-builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN set -eux; \
     #
@@ -87,9 +87,9 @@ RUN set -eux; \
     #
     # Install Swoole \
     apk add --no-cache libstdc++ libpq; \
-    apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers postgresql-dev openssl-dev pcre-dev pcre2-dev zlib-dev; \
+    apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers openssl-dev pcre-dev pcre2-dev zlib-dev; \
     docker-php-ext-install sockets; \
-    mkdir /usr/src/php/ext/swoole; \
+    mkdir -p /usr/src/php/ext/swoole; \
     curl -sfL https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz; \
     tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/swoole; \
     if [ -n "${SWOOLE_HTTP_SERVER_NAME}" ]; then \
