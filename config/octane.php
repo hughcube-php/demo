@@ -204,7 +204,11 @@ return [
     'max_execution_time' => 10, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
     'swoole' => [
-        'mode' => null,
+        /**
+         * @see https://wiki.swoole.com/zh-cn/#/learn?id=server%e7%9a%84%e4%b8%89%e7%a7%8d%e8%bf%90%e8%a1%8c%e6%a8%a1%e5%bc%8f%e4%bb%8b%e7%bb%8d
+         */
+        'mode' => env('OCTANE_SWOOLE_MODE'),
+
         'options' => [
             /**
              * @see https://wiki.swoole.com/zh-cn/#/server/setting?id=dispatch_mode

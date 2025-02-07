@@ -18,7 +18,8 @@ services:
         COMPOSER_ALLOW_SUPERUSER: 1
         COMPOSER_HOME: /root/.composer/
     #command: sh -c 'until /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
-    command: sh -c 'until /usr/local/bin/php /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=500 --task-workers=1 --workers=3 --watch; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
+    command: sh -c 'until /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
+    #command: sh -c 'until /usr/local/bin/php /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=500 --task-workers=1 --workers=3 --watch; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
     volumes:
         - .:/data/app:rw
         - home-volume:/root/:rw
