@@ -24,7 +24,7 @@ RUN set -eux; \
     # Install Utils
     apk add --no-cache \
     vim curl subversion git wget procps busybox-extras iputils-ping apache2-utils bind-tools \
-    tcpdump tshark ngrep htop lsof iftop sysstat sysstat nmap psmisc traceroute; \
+    tcpdump tshark ngrep htop lsof iftop sysstat sysstat nmap psmisc traceroute strace; \
     #
     # Install Httpstat
     apk add --no-cache curl; \
