@@ -69,7 +69,7 @@ RUN php artisan octane:prepare \
         --host="0.0.0.0" \
         --port=80 \
         --workers="${OCTANE_MAX_WORKERS}" \
-        --task-workers="${OCTANE_MAX_TASK_WORKERS}" \
+        --task-workers="${OCTANE_MAX_TASK_WORKERS:-1}" \
         --max-requests="${OCTANE_MAX_REQUESTS}" \
         --state-file="$OCTANE_STATE_FILE"
 

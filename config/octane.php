@@ -203,6 +203,8 @@ return [
 
     'max_execution_time' => 10, #intval(env('OCTANE_MAX_EXECUTION_TIME', 30)),
 
+    'tick' => env('OCTANE_MAX_TASK_WORKERS', 1) > 0,
+
     'swoole' => [
         /**
          * @see https://wiki.swoole.com/zh-cn/#/learn?id=server%e7%9a%84%e4%b8%89%e7%a7%8d%e8%bf%90%e8%a1%8c%e6%a8%a1%e5%bc%8f%e4%bb%8b%e7%bb%8d
