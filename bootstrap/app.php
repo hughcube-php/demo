@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \HughCube\Laravel\Octane\Middleware\ClearTimeOutTimerGuard::class,
             \HughCube\Profiler\Laravel\Middleware::class,
             \HughCube\Laravel\Knight\Http\Middleware\TrustProxies::class,
+            \HughCube\Laravel\Knight\Http\Middleware\SetHstsHeaderIfHttps::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
@@ -36,7 +37,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
-    ->withBindings([
-        \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class,
-    ])
+    ->withBindings([])
     ->create();
