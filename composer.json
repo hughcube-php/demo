@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "ocula/api",
+    "name": "demo/api",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
@@ -86,9 +86,9 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "hughcube/composer-proxy-plugin": true,
+            "php-http/discovery": true,
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "hughcube/composer-proxy-plugin": true
         }
     },
     "minimum-stability": "stable",
