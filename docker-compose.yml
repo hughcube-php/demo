@@ -10,7 +10,7 @@ services:
     #image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest
     image: crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:base-latest-developer
     ports:
-      - "5021:80"
+      - "5012:80"
     user: root:root
     #user: www-data:www-data
     environment:

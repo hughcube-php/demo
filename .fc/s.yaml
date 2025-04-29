@@ -1,5 +1,5 @@
 edition: 3.0.0
-name: fc3
+name: fc3-example
 access: default
 resources:
   fcDemo:
@@ -8,6 +8,7 @@ resources:
       region: cn-shanghai
       handler: index.handler
       role: acs:ram::1334840231131892:role/aliyunfcdefaultrole
+      disableOndemand: false
       nasConfig:
         groupId: 0
         mountPoints:
@@ -40,10 +41,10 @@ resources:
       environmentVariables:
         TZ: Asia/Shanghai
       vpcConfig:
-        securityGroupId: sg-uf62t5jpvumh055mhz0l
+        securityGroupId: sg-uf68gvsb2isgz7gxs7vn
         vpcId: vpc-uf6psxvi29xp5tpngitrw
         vSwitchIds:
-          - vsw-uf6fa9x6kmhoaoe9zlff4
+          - vsw-uf6o7p3thcptd5alefp75
       triggers:
         - triggerConfig:
             payload: >-
@@ -57,6 +58,7 @@ resources:
       asyncInvokeConfig:
         asyncTask: true
         maxAsyncEventAgeInSeconds: 86400
+        destinationConfig: {}
         maxAsyncRetryAttempts: 3
       concurrencyConfig:
         reservedConcurrency: 10
