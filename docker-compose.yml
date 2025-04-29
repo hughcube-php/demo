@@ -1,0 +1,32 @@
+name: demo
+
+networks:
+  app:
+    driver: bridge
+
+services:
+  app:
+    #image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-latest
+    #image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest
+    image: crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:base-latest-developer
+    ports:
+      - "5021:80"
+    user: root:root
+    #user: www-data:www-data
+    environment:
+        COMPOSER_ALLOW_SUPERUSER: 1
+        COMPOSER_HOME: /root/.composer/
+        COMPOSER_PROXY: ${COMPOSER_PROXY}
+        HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
+    #command: sh -c 'until /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
+    command: sh -c 'until /usr/local/bin/php /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=500 --task-workers=1 --workers=3 --watch --admin-port=8080; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
+    volumes:
+        - .:/data/app:rw
+        - home-volume:/root/:rw
+        - ./storage/logs:/data/logs:rw
+    restart: always
+    networks:
+      - app
+
+volumes:
+  home-volume: {}

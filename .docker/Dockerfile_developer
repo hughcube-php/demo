@@ -1,0 +1,45 @@
+ARG BASE_IMAGE=crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:base-latest-composer
+
+
+#########################################################################################################
+#### 开发镜像镜像
+#########################################################################################################
+FROM ${BASE_IMAGE}
+
+USER root:root
+
+ENV NODE_PATH "/usr/local/lib/node_modules"
+
+RUN set -eux; \
+    #
+    # Update
+    apk update; \
+    #
+    # Install build dependencies
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
+    #
+    # Install Chokidar
+    apk add --no-cache npm && npm install -g chokidar; \
+    #
+    # Install Utils
+    apk add --no-cache \
+    vim curl subversion git wget procps busybox-extras iputils-ping apache2-utils bind-tools \
+    tcpdump tshark ngrep htop lsof iftop sysstat sysstat nmap psmisc traceroute strace; \
+    #
+    # Install Httpstat
+    apk add --no-cache curl; \
+    apk add --no-cache python3; \
+    curl -o /usr/local/bin/httpstat https://raw.githubusercontent.com/reorx/httpstat/master/httpstat.py; \
+    chmod +x /usr/local/bin/httpstat; \
+    #
+    # Install Httpflow \
+    apk add --no-cache curl libpcap-dev zlib-dev make g++ libpcap-dev build-base gcc g++ pcre pcre-dev libc6-compat; \
+    git clone https://github.com/six-ddc/httpflow /opt/httpflow; \
+    cd /opt/httpflow && make && make install; \
+    rm -rf /opt/httpflow; \
+    #
+    # Clear \
+    docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"
+
+CMD /usr/local/bin/php ${APP_BASE_PATH}/artisan serve

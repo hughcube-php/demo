@@ -1,0 +1,62 @@
+edition: 3.0.0
+name: fc3
+access: default
+resources:
+  fcDemo:
+    component: fc3
+    props:
+      region: cn-shanghai
+      handler: index.handler
+      role: acs:ram::1334840231131892:role/aliyunfcdefaultrole
+      nasConfig:
+        groupId: 0
+        mountPoints:
+          - enableTLS: false
+            serverAddr: 3f9ee48659-pmh29.cn-shanghai.nas.aliyuncs.com:/fc/demo/logs
+            mountDir: /data/logs
+        userId: 0
+      description: ''
+      timeout: 30
+      diskSize: 512
+      internetAccess: true
+      logConfig:
+        enableRequestMetrics: true
+        enableInstanceMetrics: true
+        logBeginRule: DefaultRegex
+        project: zycube
+        logstore: alifc
+      functionName: demo
+      instanceLifecycleConfig:
+        preStop:
+          handler: 'true'
+          timeout: 30
+      runtime: custom-container
+      cpu: 0.25
+      customContainerConfig:
+        image: crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:app-latest
+        port: 80
+      instanceConcurrency: 2
+      memorySize: 640
+      environmentVariables:
+        TZ: Asia/Shanghai
+      vpcConfig:
+        securityGroupId: sg-uf62t5jpvumh055mhz0l
+        vpcId: vpc-uf6psxvi29xp5tpngitrw
+        vSwitchIds:
+          - vsw-uf6fa9x6kmhoaoe9zlff4
+      triggers:
+        - triggerConfig:
+            payload: >-
+              {"uuid":"a1203f7b-2877-43e8-88bb-3620331fe9a7","displayName":"App\\Jobs\\AAAScheduleJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\AAAScheduleJob","command":"O:23:\"App\\Jobs\\AAAScheduleJob\":0:{}"},"createdAt":"2023-12-28T09:25:05.768148+08:00"}
+            cronExpression: CRON_TZ=Asia/Shanghai 0 * * * * *
+            enable: true
+          triggerName: Schedule
+          description: ''
+          qualifier: LATEST
+          triggerType: timer
+      asyncInvokeConfig:
+        asyncTask: true
+        maxAsyncEventAgeInSeconds: 86400
+        maxAsyncRetryAttempts: 3
+      concurrencyConfig:
+        reservedConcurrency: 10
