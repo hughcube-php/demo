@@ -53,6 +53,9 @@ RUN set -eux; \
     # Install GMP
     apk add --no-cache gmp-dev && docker-php-ext-install gmp; \
     #
+    # Install Intl
+    apk add --no-cache icu-dev && docker-php-ext-install intl; \
+    #
     # Install Zend OpCache \
     docker-php-ext-enable opcache;  \
     rm -rf /tmp/opcache && mkdir -p /tmp/opcache && chmod -R 0777 /tmp/opcache; \
