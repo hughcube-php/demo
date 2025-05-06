@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+if (file_exists(__DIR__ . '/preload.php')) {
+    require __DIR__ . '/preload.php';
+}
+
+require __DIR__ . '/vendor/laravel/octane/bin/swoole-server';
