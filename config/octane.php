@@ -219,11 +219,20 @@ return [
 
     'swoole' => [
         #'mode' => SWOOLE_BASE,
+        'command' => dirname(__DIR__) . '/server',
         'options' => [
             'dispatch_mode' => 3,
+            'task_ipc_mode' => 1,
             'send_yield' => false,
             'max_wait_time' => 600,
+            'reload_async' => true,
+            'open_tcp_nodelay' => true,
+            'enable_coroutine' => false,
+            'enable_reuse_port' => true,
             'http_compression' => false,
+            'buffer_output_size' => 2 * 1024 * 1024,
+            'socket_buffer_size' => 8 * 1024 * 1024,
+            'package_max_length' => 4 * 1024 * 1024,
 
             'log_level' => 0, #SWOOLE_LOG_DEBUG,
             'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,

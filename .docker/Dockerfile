@@ -81,7 +81,7 @@ RUN set -eux; \
         echo "opcache.file_cache_consistency_checks=0"; \
         echo "opcache.validate_permission=0"; \
         echo "opcache.huge_code_pages=1"; \
-        echo "opcache.preload=${APP_BASE_PATH}/preload.php"; \
+        #echo "opcache.preload=${APP_BASE_PATH}/preload.php"; \
         echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
@@ -118,4 +118,4 @@ CMD /usr/local/bin/php \
         -d realpath_cache_ttl="86400" \
         -d error_reporting="E_ALL" \
         -d error_log="${LOG_PATH}/php-error.log" \
-        "${APP_BASE_PATH}/vendor/bin/swoole-server" "${OCTANE_STATE_FILE}"
+        "${APP_BASE_PATH}/server" "${OCTANE_STATE_FILE}"
