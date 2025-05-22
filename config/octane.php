@@ -219,7 +219,6 @@ return [
 
     'swoole' => [
         #'mode' => SWOOLE_BASE,
-        'command' => dirname(__DIR__) . '/server',
         'options' => [
             'dispatch_mode' => 3,
             #'task_ipc_mode' => 1,
