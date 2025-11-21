@@ -12,7 +12,7 @@ services:
     ports:
       - "5012:80"
     user: root:root
-    #user: www-data:www-data
+      #user: www-data:www-data
     environment:
         COMPOSER_ALLOW_SUPERUSER: 1
         COMPOSER_HOME: /root/.composer/
@@ -23,10 +23,13 @@ services:
     volumes:
         - .:/data/app:rw
         - home-volume:/root/:rw
-        - ./storage/logs:/data/logs:rw
+
+        # OPcache 配置文件
+        - ./.docker/developer-opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
+        - ./.docker/developer-opcache-blacklist.txt:/usr/local/etc/php/opcache.blacklist:ro
     restart: always
     networks:
-      - app
+        - app
 
 volumes:
-  home-volume: {}
+    home-volume: {}

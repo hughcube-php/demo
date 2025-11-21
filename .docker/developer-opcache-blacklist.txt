@@ -1,0 +1,13 @@
+; OPcache 黑名单 - 不缓存以下路径的文件
+; 只缓存 vendor 目录,其他目录不缓存以便开发时实时生效
+
+/data/app/artisan
+/data/app/app/*
+/data/app/bootstrap/*
+/data/app/config/*
+/data/app/database/*
+/data/app/public/*
+/data/app/resources/*
+/data/app/routes/*
+/data/app/storage/*
+/data/app/tests/*
