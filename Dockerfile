@@ -1,5 +1,5 @@
 
-ARG BASE_IMAGE=crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/ocula:base-latest
+ARG BASE_IMAGE=crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:base-latest
 
 # 代码构建
 FROM ${BASE_IMAGE}-composer AS builder

@@ -41,8 +41,8 @@ RUN set -eux; \
     # Install BCMath
     docker-php-ext-install bcmath; \
     #
-    # Install PDO_MYSQL
-    docker-php-ext-install pdo_mysql; \
+    # Install PDO_PGSQL
+    apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql; \
     #
     # Install xhprof ext
     pecl install xhprof && docker-php-ext-enable xhprof; \
@@ -56,35 +56,39 @@ RUN set -eux; \
     # Install Intl
     apk add --no-cache icu-dev && docker-php-ext-install intl; \
     #
-    # Install Zend OpCache \
-    docker-php-ext-enable opcache;  \
+    # Install Zend OpCache
+    # 说明: 配置 opcache 以优化 PHP 性能,适用于生产环境 (Swoole/Octane)
+    # 注意: 以下配置针对 Laravel Octane + Swoole,与 artisan serve 的配置要求不同
+    # PHP 8.5+ 默认启用 opcache,无需手动 enable
+    if ! php -m | grep -qi opcache; then docker-php-ext-enable opcache; fi; \
     rm -rf /tmp/opcache && mkdir -p /tmp/opcache && chmod -R 0777 /tmp/opcache; \
     rm -rf /usr/local/etc/php/conf.d/*opcache.ini && touch /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
     { \
-        echo "zend_extension=opcache"; \
-        echo "opcache.enable=1"; \
-        echo "opcache.enable_cli=1"; \
-        #echo "opcache.jit=1205"; \
-        #echo "opcache.jit_buffer_size=256M"; \
-        echo "opcache.memory_consumption=512"; \
-        echo "opcache.interned_strings_buffer=64";  \
-        echo "opcache.max_accelerated_files=1000000"; \
-        echo "opcache.validate_timestamps=0";  \
-        echo "opcache.revalidate_freq=86400"; \
-        echo "opcache.revalidate_path=0"; \
-        echo "opcache.save_comments=0"; \
-        echo "opcache.enable_file_override=0"; \
-        echo "opcache.max_file_size=0"; \
-        echo "opcache.file_update_protection=0"; \
-        echo "opcache.use_cwd=0"; \
-        echo "opcache.file_cache=/tmp/opcache"; \
-        echo "opcache.file_cache_consistency_checks=0"; \
-        echo "opcache.validate_permission=0"; \
-        echo "opcache.huge_code_pages=1"; \
-        echo "opcache.preload=${APP_BASE_PATH}/preload.php"; \
-        echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log"; \
-        echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist"; \
+        echo "zend_extension=opcache ; 加载 opcache 扩展"; \
+        echo "opcache.enable=1 ; 启用 opcache"; \
+        echo "opcache.enable_cli=1 ; CLI 模式也启用 (适用于 Octane)"; \
+        echo ";opcache.jit=1205 ; JIT 优化级别 (PHP 8.0+, 可能降低性能,建议测试后启用)"; \
+        echo ";opcache.jit_buffer_size=256M ; JIT 缓冲区大小"; \
+        echo "opcache.memory_consumption=512 ; opcache 内存大小 512MB"; \
+        echo "opcache.interned_strings_buffer=64 ; 字符串缓冲区 64MB (存储类名/函数名等)"; \
+        echo "opcache.max_accelerated_files=1000000 ; 最大缓存文件数 (vendor 有大量文件)"; \
+        echo "opcache.validate_timestamps=0 ; 禁用时间戳验证 (生产环境不检查文件修改,性能最佳)"; \
+        echo "opcache.revalidate_freq=86400 ; 重新验证频率 (validate_timestamps=0 时无效)"; \
+        echo "opcache.revalidate_path=0 ; 禁用路径验证 (使用完整路径)"; \
+        echo "opcache.validate_permission=0 ; 禁用权限验证 (提升性能)"; \
+        echo "opcache.save_comments=0 ; 不保存注释 (生产环境可禁用,减小缓存大小)"; \
+        echo "opcache.enable_file_override=0 ; 禁用 file_exists 等函数的缓存优化 (更安全)"; \
+        echo "opcache.max_file_size=0 ; 不限制文件大小"; \
+        echo "opcache.file_update_protection=0 ; 文件更新保护时间 0秒 (生产环境建议设为 2)"; \
+        echo "opcache.use_cwd=0 ; 使用绝对路径作为缓存键"; \
+        echo "opcache.file_cache=/tmp/opcache ; 文件缓存目录 (持久化缓存到磁盘)"; \
+        echo "opcache.file_cache_consistency_checks=0 ; 禁用文件缓存一致性检查 (提升性能)"; \
+        echo "opcache.huge_code_pages=1 ; 启用大页内存 (Linux 性能优化,需系统支持)"; \
+        echo "opcache.preload=${APP_BASE_PATH}/preload.php ; 预加载脚本 (启动时加载常用类, PHP 7.4+)"; \
+        echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log ; opcache 错误日志"; \
+        echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist ; 黑名单文件 (指定不缓存的目录)"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
+    # 创建必要的目录和文件
     mkdir -p "${APP_BASE_PATH}" "${LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
     #
