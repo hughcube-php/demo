@@ -35,6 +35,9 @@ RUN set -eux; \
     # Install build dependencies
     apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
     #
+    # Install Bash
+    apk add --no-cache bash; \
+    #
     # Install Pcntl
     docker-php-ext-install pcntl; \
     #
