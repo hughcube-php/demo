@@ -26,7 +26,7 @@ resources:
         logBeginRule: DefaultRegex
         project: zycube
         logstore: alifc
-      functionName: demo
+      functionName: demo-api
       instanceLifecycleConfig:
         preStop:
           handler: 'true'
