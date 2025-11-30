@@ -24,10 +24,13 @@ return [
         RequestOptions::HEADERS => [
             'User-Agent' => null,
             'Authentication' => env('PROFILER_HTTP_AUTHENTICATION'),
-            'X-Fc-Invocation-Type' => env('PROFILER_HTTP_INVOCATION_TYPE', 'Sync'),
         ],
         'extra' => [
             'host_resolve' => UseHostResolveMiddleware::parseConfig(env('PROFILER_HTTP_HOST_RESOLVE', ''))
+        ],
+        'middlewares' => [
+            \HughCube\Profiler\Saver\Middleware\ContentEncodingGzipMiddleware::class,
+            \HughCube\Profiler\Saver\Middleware\AliyunFcAsyncMiddleware::class,
         ],
     ],
 

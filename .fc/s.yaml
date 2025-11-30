@@ -14,7 +14,7 @@ resources:
         mountPoints:
           - enableTLS: false
             serverAddr: 3f9ee48659-pmh29.cn-shanghai.nas.aliyuncs.com:/fc/demo/logs
-            mountDir: /data/logs
+            mountDir: /data/app/storage/logs
         userId: 0
       description: ''
       timeout: 30

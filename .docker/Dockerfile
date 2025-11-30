@@ -20,10 +20,10 @@ ARG SWOOLE_HTTP_SERVER_NAME="hz"
 ENV APP_BASE_PATH                   /data/app
 ENV APP_STORAGE_PATH                ${APP_BASE_PATH}/storage
 
-ENV LOG_PATH                        /data/logs
+ENV LOG_PATH                        ${APP_STORAGE_PATH}/logs
 
 ENV LARAVEL_OCTANE                  1
-ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/logs/octane-server-state.json
+ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/run/octane-server-state.json
 
 COPY --from=tz-builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 

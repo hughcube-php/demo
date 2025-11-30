@@ -17,7 +17,7 @@
         "yansongda/laravel-pay": "^3.7",
         "overtrue/laravel-wechat": "^7.4",
         "hughcube/id-card": "^1.0",
-        "hughcube/profiler": "^1.0",
+        "hughcube/profiler": "1.*",
         "hughcube/laravel-wechat": "^2.0",
         "hughcube/laravel-alioss": "^1.0",
         "hughcube/laravel-octane": "^2.0",

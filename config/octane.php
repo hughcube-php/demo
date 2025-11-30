@@ -235,7 +235,7 @@ return [
 
             'log_level' => 0, #SWOOLE_LOG_DEBUG,
             'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
-            'log_file' => storage_path('logs/swoole_http.log'),
+            'log_file' => storage_path('run/swoole_http.log'),
         ],
     ],
 
