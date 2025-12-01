@@ -111,7 +111,7 @@ RUN set -eux; \
     #
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"; \
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*" "/tmp/pear/"; \
     #
     # test
     php -m
