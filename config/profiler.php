@@ -25,9 +25,6 @@ return [
             'User-Agent' => null,
             'Authentication' => env('PROFILER_HTTP_AUTHENTICATION'),
         ],
-        'extra' => [
-            'host_resolve' => UseHostResolveMiddleware::parseConfig(env('PROFILER_HTTP_HOST_RESOLVE', ''))
-        ],
         'middlewares' => [
             \HughCube\Profiler\Saver\Middleware\ContentEncodingGzipMiddleware::class,
             \HughCube\Profiler\Saver\Middleware\AliyunFcAsyncMiddleware::class,
