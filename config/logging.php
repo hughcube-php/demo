@@ -36,7 +36,7 @@ return [
     */
 
     'deprecations' => [
-        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'deprecation'),
+        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'deprecations'),
         'trace' => env('LOG_DEPRECATIONS_TRACE', false),
     ],
 
@@ -75,7 +75,7 @@ return [
             'days' => 0,
         ],
 
-        'deprecation' => [
+        'deprecations' => [
             'driver' => 'daily',
             'path' => log_path('laravel-deprecation.log'),
             'level' => env('LOG_LEVEL', 'debug'),
