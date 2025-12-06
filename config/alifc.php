@@ -31,5 +31,4 @@ return [
         'pre_stop' => WaitTaskCompleteAction::class,
     ],
 
-    'storagePath' => env('FC_STORAGE_PATH'),
 ];
