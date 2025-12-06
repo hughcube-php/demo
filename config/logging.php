@@ -109,6 +109,26 @@ return [
             'bubble' => false,
         ],
 
+        'stdout' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => \Monolog\Handler\StreamHandler::class,
+            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
+                'stream' => 'php://stdout',
+            ],
+        ],
+
+        'stderr' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => \Monolog\Handler\StreamHandler::class,
+            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
+                'stream' => 'php://stderr',
+            ],
+        ],
+
         'null' => [
             'driver' => 'monolog',
             'handler' => \Monolog\Handler\NullHandler::class,
