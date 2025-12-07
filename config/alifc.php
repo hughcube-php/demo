@@ -1,6 +1,6 @@
 <?php
 
-use HughCube\Laravel\Octane\Actions\WaitTaskCompleteAction;
+use HughCube\Laravel\Octane\Actions\PreStopAction;
 
 return [
     'default' => 'default',
@@ -27,8 +27,8 @@ return [
     ],
 
     'handlers' => [
-        'pre_freeze' => WaitTaskCompleteAction::class,
-        'pre_stop' => WaitTaskCompleteAction::class,
+        'pre_freeze' => PreStopAction::class,
+        'pre_stop' => PreStopAction::class,
     ],
 
 ];
