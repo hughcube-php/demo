@@ -34,10 +34,10 @@ RUN composer dump-autoload --optimize --classmap-authoritative
 
 
 # (一定要在修改代码之后)优化框架(\Illuminate\Foundation\Console\OptimizeClearCommand)
-RUN php artisan view:clear && php artisan view:cache
-RUN php artisan event:clear && php artisan event:cache
-RUN php artisan route:clear && php artisan route:cache
 RUN php artisan config:clear && php artisan config:cache
+RUN php artisan event:clear && php artisan event:cache
+RUN php artisan view:clear && php artisan view:cache
+RUN php artisan route:clear && php artisan route:cache
 
 RUN php artisan opcache:create-preload
 RUN php preload.php
