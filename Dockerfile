@@ -62,8 +62,8 @@ RUN php artisan octane:prepare \
 #########################################################################################################
 FROM ${BASE_IMAGE}
 
-#COPY --from=builder --chown=www-data:www-data ${APP_BASE_PATH} ${APP_BASE_PATH}
-#RUN chown -R www-data:www-data /tmp/opcache/ && su -s /bin/sh - www-data -c "php /data/app/artisan opcache:compile-files"
+COPY --from=builder --chown=www-data:www-data ${APP_BASE_PATH} ${APP_BASE_PATH}
+RUN chown -R www-data:www-data /tmp/opcache/ && su -s /bin/sh - www-data -c "php /data/app/artisan opcache:compile-files"
 
-COPY --from=builder  ${APP_BASE_PATH} ${APP_BASE_PATH}
-RUN php /data/app/artisan opcache:compile-files
+#COPY --from=builder  ${APP_BASE_PATH} ${APP_BASE_PATH}
+#RUN php /data/app/artisan opcache:compile-files
