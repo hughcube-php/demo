@@ -220,8 +220,8 @@ return [
     'swoole' => [
         #'mode' => SWOOLE_BASE,
         'options' => [
-            'user' => 'www-data',
-            'group' => 'www-data',
+            #'user' => 'www-data',
+            #'group' => 'www-data',
 
             'dispatch_mode' => 3,
             #'task_ipc_mode' => 1,
