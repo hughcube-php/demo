@@ -28,7 +28,7 @@ ENV OCTANE_STATE_FILE               ${APP_STORAGE_PATH}/run/octane-server-state.
 COPY --from=tz-builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN set -eux; \
-    #
+    # \
     # Update
     apk update; \
     #
@@ -91,10 +91,10 @@ RUN set -eux; \
         echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log ; opcache 错误日志"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist ; 黑名单文件 (指定不缓存的目录)"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini; \
-    # 创建必要的目录和文件
+    # 创建必要的目录和文件 \
     mkdir -p "${APP_BASE_PATH}" "${LOG_PATH}" && echo "<?php " > "${APP_BASE_PATH}/preload.php"; \
     rm -rf /usr/local/etc/php/opcache.blacklist && touch /usr/local/etc/php/opcache.blacklist; \
-    #
+    # \
     # Install Swoole \
     apk add --no-cache libstdc++ libpq; \
     apk add --no-cache --virtual .build-deps-ext-swoole curl-dev linux-headers openssl-dev pcre-dev pcre2-dev zlib-dev; \
@@ -108,13 +108,13 @@ RUN set -eux; \
     docker-php-ext-configure swoole; \
     docker-php-ext-install -j$(nproc) swoole; \
     rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
-    #
+    # \
+    # test
+    su -s /bin/sh - www-data -c "php -m"; \
+    # \
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*" "/tmp/pear/"; \
-    #
-    # test
-    php -m
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*" "/tmp/pear/"
 
 WORKDIR ${APP_BASE_PATH}
 
