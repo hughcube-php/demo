@@ -70,23 +70,25 @@ RUN set -eux; \
         echo "zend_extension=opcache ; 加载 opcache 扩展"; \
         echo "opcache.enable=1 ; 启用 opcache"; \
         echo "opcache.enable_cli=1 ; CLI 模式也启用 (适用于 Octane)"; \
-        echo ";opcache.jit=1205 ; JIT 优化级别 (PHP 8.0+, 可能降低性能,建议测试后启用)"; \
-        echo ";opcache.jit_buffer_size=256M ; JIT 缓冲区大小"; \
+        echo "opcache.jit=disable ; 显式禁用 JIT (避免误开启/额外内存开销)"; \
+        echo "opcache.jit_buffer_size=0 ; 禁用 JIT buffer"; \
+        echo ";opcache.jit=1205 ; (可选) 启用 JIT,建议压测后再启用"; \
+        echo ";opcache.jit_buffer_size=256M ; (可选) JIT 缓冲区大小"; \
         echo "opcache.memory_consumption=512 ; opcache 内存大小 512MB"; \
         echo "opcache.interned_strings_buffer=64 ; 字符串缓冲区 64MB (存储类名/函数名等)"; \
-        echo "opcache.max_accelerated_files=1000000 ; 最大缓存文件数 (vendor 有大量文件)"; \
+        echo "opcache.max_accelerated_files=100000 ; 最大缓存文件数 (建议略大于 PHP 文件总数)"; \
         echo "opcache.validate_timestamps=0 ; 禁用时间戳验证 (生产环境不检查文件修改,性能最佳)"; \
         echo "opcache.revalidate_freq=86400 ; 重新验证频率 (validate_timestamps=0 时无效)"; \
         echo "opcache.revalidate_path=0 ; 禁用路径验证 (使用完整路径)"; \
         echo "opcache.validate_permission=0 ; 禁用权限验证 (提升性能)"; \
-        echo "opcache.save_comments=0 ; 不保存注释 (生产环境可禁用,减小缓存大小)"; \
-        echo "opcache.enable_file_override=0 ; 禁用 file_exists 等函数的缓存优化 (更安全)"; \
+        echo "opcache.save_comments=0 ; 保留注释 (Laravel/反射/注解更稳)"; \
+        echo "opcache.enable_file_override=1 ; 启用 file_exists 等函数的缓存优化 (代码不变更时更合适)"; \
         echo "opcache.max_file_size=0 ; 不限制文件大小"; \
-        echo "opcache.file_update_protection=0 ; 文件更新保护时间 0秒 (生产环境建议设为 2)"; \
+        echo "opcache.file_update_protection=0 ; 文件更新保护时间 0秒 (代码不变更时可设为 0)"; \
         echo "opcache.use_cwd=0 ; 使用绝对路径作为缓存键"; \
         echo "opcache.file_cache=/tmp/opcache ; 文件缓存目录 (持久化缓存到磁盘)"; \
         echo "opcache.file_cache_consistency_checks=0 ; 禁用文件缓存一致性检查 (提升性能)"; \
-        echo "opcache.huge_code_pages=1 ; 启用大页内存 (Linux 性能优化,需系统支持)"; \
+        echo "opcache.huge_code_pages=1 ; Huge Pages 需宿主机配置,未配置时建议保持关闭"; \
         echo "opcache.preload=${APP_BASE_PATH}/preload.php ; 预加载脚本 (启动时加载常用类, PHP 7.4+)"; \
         echo "opcache.error_log=${LOG_PATH}/php-opcache-error.log ; opcache 错误日志"; \
         echo "opcache.blacklist_filename=/usr/local/etc/php/opcache.blacklist ; 黑名单文件 (指定不缓存的目录)"; \
@@ -109,12 +111,12 @@ RUN set -eux; \
     docker-php-ext-install -j$(nproc) swoole; \
     rm -f swoole.tar.gz && apk del --no-network .build-deps-ext-swoole;  \
     # \
-    # test
-    su -s /bin/sh - www-data -c "php -m"; \
-    # \
     # Clear \
     docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
-    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*" "/tmp/pear/"
+    rm -rf "/tmp/opcache/*" "${LOG_PATH}/*" "/tmp/pear/"; \
+    # \
+    # test
+    php -m
 
 WORKDIR ${APP_BASE_PATH}
 
