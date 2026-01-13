@@ -28,3 +28,4 @@ composer.lock
 tests/KRTest.php
 
 .claude
+/tmpclaude-*

@@ -75,6 +75,13 @@ return [
             'days' => 0,
         ],
 
+        'healthcheck' => [
+            'driver' => 'daily',
+            'path' => log_path('laravel-healthcheck.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 0,
+        ],
+
         'deprecations' => [
             'driver' => 'daily',
             'path' => log_path('laravel-deprecation.log'),

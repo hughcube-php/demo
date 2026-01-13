@@ -217,10 +217,10 @@ return [
 
     'tick' => false,
 
-    'serve_static_files' => false,
+    'serve_static_files' => boolval(env('OCTANE_SERVE_STATIC_FILES', false)),
 
     'swoole' => [
-        'clear_opcache' => false,
+        'clear_opcache' => boolval(env('OCTANE_CLEAR_OPCACHE', false)),
         #'mode' => SWOOLE_BASE,
         'options' => [
             'user' => 'www-data',

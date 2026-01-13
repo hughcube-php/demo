@@ -9,9 +9,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         using: function () {
 
-            Route::prefix('api')->middleware('api')->group(base_path('routes/api.php'));
+            Route::prefix('/api')->middleware('api')->group(base_path('routes/api.php'));
 
-            Route::any('/', \HughCube\Laravel\Knight\Http\Actions\PingAction::class);
+            Route::prefix('/devops')->middleware('devops')->group(base_path('routes/devops.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -30,14 +30,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /** web middleware group */
         $middleware->group('web', [
-
         ]);
 
         /** api middleware group */
         $middleware->group('api', [
+            \App\Http\Api\Middleware\Authenticate::class,
+            \App\Http\Api\Middleware\SignatureValidate::class,
+        ]);
+
+        /** devOps middleware group */
+        $middleware->group('devops', [
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions){
+    ->withExceptions(function (Exceptions $exceptions) {
 
     })
     ->withSingletons([
