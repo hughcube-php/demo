@@ -11,6 +11,11 @@ abstract class AAAJob extends \HughCube\Laravel\Knight\Queue\Job
     /**
      * @var string
      */
+    public $queue = 'high';
+
+    /**
+     * @var string
+     */
     protected $logChannel = 'queue';
 
     /**
@@ -19,19 +24,19 @@ abstract class AAAJob extends \HughCube\Laravel\Knight\Queue\Job
      */
     public static function dispatchP(...$arguments): PendingDispatch
     {
-        return static::dispatch(...$arguments)->onConnection('database');
+        return static::dispatch(...$arguments);
     }
 
     /**
-     * @param  int  $level
-     * @param  string  $message
-     * @param  array<int|string, mixed>  $context
+     * @param int $level
+     * @param string $message
+     * @param array<int|string, mixed> $context
      * @return void
      * @throws Exception
      */
     public function log($level, string $message, array $context = []): void
     {
-        if (config('app.debug')) {
+        if ($this->isContainerDebug() && $this->isContainerLocalEnv()) {
             $name = Str::afterLast(get_class($this), '\\');
             echo sprintf('[%s-%s] %s', $name, $this->getPid(), $message), PHP_EOL;
         }

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,8 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::prefix('/api')->middleware('api')->group(base_path('routes/api.php'));
 
             Route::prefix('/devops')->middleware('devops')->group(base_path('routes/devops.php'));
-        }
+        },
+        commands: base_path('routes/console.php'),
     )
+    ->withSchedule(function (Schedule $schedule) {
+    })
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
 
@@ -26,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             #\HughCube\Laravel\Knight\Http\Middleware\TrustProxies::class,
             #\HughCube\Laravel\Knight\Http\Middleware\SetHstsHeaderIfHttps::class,
             \HughCube\Laravel\Knight\Http\Middleware\HandleAllPathCors::class,
+            \HughCube\Laravel\Knight\Http\Middleware\HandleBusinessRuleException::class,
         ]);
 
         /** web middleware group */
@@ -45,6 +50,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
 
     })
+    ->withProviders([
+        \App\Providers\AppServiceProvider::class,
+    ])
     ->withSingletons([
         \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class
     ])

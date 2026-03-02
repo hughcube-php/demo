@@ -8,25 +8,32 @@
 
 namespace App\Models;
 
+use HughCube\Laravel\Knight\Database\Eloquent\Builder;
 use HughCube\Laravel\Knight\Database\Eloquent\Traits\Model as KnightModel;
+use HughCube\Laravel\Knight\Database\Eloquent\Traits\OptimisticLock;
+use HughCube\Laravel\Knight\Traits\GetKnightSortValueTrait;
 use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Traits\Tappable;
 
 /**
- * @property int $data_version
+ * @method Builder valid()
+ * @method static Builder query()
  */
 trait AAATrait
 {
+    use Tappable;
     use KnightModel;
-    use HasFactory;
+    use OptimisticLock;
+    use GetKnightSortValueTrait;
 
-    public function __construct(array $attributes = [])
+    /**
+     * 空字符串转为 null
+     */
+    protected function convertEmptyStringsToNull(?string $value): ?string
     {
-        parent::__construct($attributes);
-
-        if (defined(sprintf('%s::DELETED_AT', static::class))) {
-            $this->casts[static::DELETED_AT] = 'datetime';
-        }
+        return ('' === $value || null === $value) ? null : $value;
     }
 
     public function getModelCachePrefix(): ?string
@@ -36,6 +43,17 @@ trait AAATrait
 
     public function getCache(): null|Repository
     {
-        return null;
+        return Cache::store('file');
+    }
+
+    public function scopeValid($query): Builder
+    {
+        return $query;
+    }
+
+    public function toDateTime($date = null): null|Carbon
+    {
+        /** @phpstan-ignore-next-line */
+        return Carbon::tryParse($date);
     }
 }

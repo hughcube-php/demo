@@ -67,6 +67,8 @@ return [
 
     'timezone' => env('APP_TIMEZONE', 'Asia/Shanghai'),
 
+    'schedule_timezone' => env('APP_TIMEZONE', 'Asia/Shanghai'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -132,7 +134,7 @@ return [
         #Illuminate\Concurrency\ConcurrencyServiceProvider::class,
         #Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
-        #Illuminate\Encryption\EncryptionServiceProvider::class,
+        Illuminate\Encryption\EncryptionServiceProvider::class,
         Illuminate\Filesystem\FilesystemServiceProvider::class,
         #Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         #Illuminate\Hashing\HashServiceProvider::class,
@@ -142,7 +144,7 @@ return [
         #Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         #Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
-        #Illuminate\Redis\RedisServiceProvider::class,
+        Illuminate\Redis\RedisServiceProvider::class,
         #Illuminate\Session\SessionServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,

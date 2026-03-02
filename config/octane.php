@@ -21,6 +21,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Octane State File
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the path to the state file that Octane will use
+    | to store the server state. This file is used to communicate between
+    | the server and the CLI commands.
+    |
+    */
+
+    'state_file' => env('OCTANE_STATE_FILE', storage_path('logs/octane-server-state.json')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Force HTTPS
     |--------------------------------------------------------------------------
     |
@@ -61,7 +74,7 @@ return [
             \Laravel\Octane\Listeners\EnforceRequestScheme::class,
             \Laravel\Octane\Listeners\CreateUrlGeneratorSandbox::class,
             \Laravel\Octane\Listeners\CreateConfigurationSandbox::class,
-            \Laravel\Octane\Listeners\GiveNewRequestInstanceToPaginator::class,
+            #\Laravel\Octane\Listeners\GiveNewRequestInstanceToPaginator::class,
             \Laravel\Octane\Listeners\EnsureRequestServerPortMatchesScheme::class,
             \Laravel\Octane\Listeners\GiveNewApplicationInstanceToMailManager::class,
             \Laravel\Octane\Listeners\GiveNewApplicationInstanceToSessionManager::class,
@@ -104,7 +117,7 @@ return [
             \Laravel\Octane\Listeners\FlushOnce::class,
             \Laravel\Octane\Listeners\FlushTemporaryContainerInstances::class,
             #\Laravel\Octane\Listeners\DisconnectFromDatabases::class,
-            #\Laravel\Octane\Listeners\CollectGarbage::class,
+            \Laravel\Octane\Listeners\CollectGarbage::class,
         ],
 
         \Laravel\Octane\Events\WorkerErrorOccurred::class => [
@@ -220,27 +233,43 @@ return [
     'serve_static_files' => boolval(env('OCTANE_SERVE_STATIC_FILES', false)),
 
     'swoole' => [
+        // Worker启动时不清除opcache, Docker构建阶段已预编译(opcache:compile-files), 清除会浪费预热
         'clear_opcache' => boolval(env('OCTANE_CLEAR_OPCACHE', false)),
         #'mode' => SWOOLE_BASE,
         'options' => [
-            'user' => 'www-data',
-            'group' => 'www-data',
+            #'user' => 'www-data',
+            #'group' => 'www-data',
 
+            // Reactor线程数, 负责网络IO多路复用(epoll), 建议等于CPU核心数, 通过构建参数传入
+            'reactor_num' => intval(env('OCTANE_REACTOR_NUM', 1)),
+
+            // 抢占模式: 只投递给空闲Worker, 非协程阻塞模式下的最佳选择
             'dispatch_mode' => 3,
+
             #'task_ipc_mode' => 1,
-            'send_yield' => false,
-            'max_wait_time' => 600,
+
+            // Worker reload/shutdown时等待当前请求完成的最大时间, 超时后强制kill
+            'max_wait_time' => 30,
+
             #'reload_async' => true,
+
+            // 禁用Nagle算法, ALB+K8s架构下HTTP响应一次性写出, 收益不大
             #'open_tcp_nodelay' => true,
+
             #'enable_coroutine' => false,
+
+            // SO_REUSEPORT内核级连接分发, ALB已做负载均衡, 单Pod无accept竞争
             #'enable_reuse_port' => true,
+
+            // 禁用Swoole压缩, 由Nginx/ALB处理
             'http_compression' => false,
+
             #'buffer_output_size' => 2 * 1024 * 1024,
             #'socket_buffer_size' => 8 * 1024 * 1024,
             #'package_max_length' => 4 * 1024 * 1024,
 
-            'log_level' => 0, #SWOOLE_LOG_DEBUG,
-            'log_rotation' => 2, # SWOOLE_LOG_ROTATION_DAILY,
+            'log_level' => env('APP_DEBUG') ? 0 /** SWOOLE_LOG_DEBUG */ : 5 /** SWOOLE_LOG_ERROR */,
+            'log_rotation' => 2, // SWOOLE_LOG_ROTATION_DAILY
             'log_file' => storage_path('run/swoole_http.log'),
         ],
     ],
