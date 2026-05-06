@@ -9,8 +9,8 @@ services:
     #image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:app-latest
     #image: registry.cn-hangzhou.aliyuncs.com/hughcube/php-demo:base-latest
     image: crpi-vrt7o5qsysdzjsbh.cn-shanghai.personal.cr.aliyuncs.com/zycube/demo:base-latest-developer
-    ports:
-      - "5012:80"
+    #ports:
+    #    - "${APP_EXPOSE_PORT:-5012}:80"
     user: root:root
       #user: www-data:www-data
     environment:
@@ -19,7 +19,7 @@ services:
         COMPOSER_PROXY: ${COMPOSER_PROXY}
         HUGHCUBE_ALIFC_ALLOW_FIRE_JOB: On
     command: sh -c 'until /usr/local/bin/php /data/app/artisan serve --host=0.0.0.0 --port=80; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
-    #command: sh -c 'until /usr/local/bin/php /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=500 --task-workers=1 --workers=3 --watch --admin-port=8080; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
+    #command: sh -c 'until /usr/local/bin/php -d xdebug.mode=off /data/app/artisan octane:start --host=0.0.0.0 --port=80 --max-requests=500 --task-workers=1 --workers=3; do echo "Command failed, retrying in 5 seconds..."; sleep 5; done'
     volumes:
         - .:/data/app:rw
         - home-volume:/root/:rw
@@ -27,7 +27,52 @@ services:
         # OPcache 配置文件
         - ./.docker/developer-opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
         - ./.docker/developer-opcache-blacklist.txt:/usr/local/etc/php/opcache.blacklist:ro
-    restart: always
+    restart: unless-stopped
+    networks:
+        - app
+    depends_on:
+        - redis
+        - pgsql
+
+  gateway:
+    image: caddy:2-alpine
+    ports:
+        - "${APP_EXPOSE_PORT:-5012}:80"
+    volumes:
+        - ./.docker/gateway.Caddyfile:/etc/caddy/Caddyfile:ro
+    environment:
+        GODEBUG: netdns=go+v4
+    dns_opt:
+        - ndots:1
+        - timeout:2
+        - attempts:3
+    restart: unless-stopped
+    networks:
+        - app
+    depends_on:
+        - app
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    volumes:
+        - ./storage/redis:/data
+    networks:
+        - app
+
+  pgsql:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+        POSTGRES_DB: demo_test
+        POSTGRES_USER: demo_test
+        POSTGRES_PASSWORD: demo_test
+        POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    command: postgres -c wal_level=logical -c max_replication_slots=4 -c max_wal_senders=4 -c max_locks_per_transaction=512
+    volumes:
+        - ./storage/pgsql:/var/lib/postgresql
+        - ./.docker/pgsql-test-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     networks:
         - app
 

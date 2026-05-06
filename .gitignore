@@ -1,3 +1,4 @@
+/.worktrees
 /node_modules
 /public/hot
 /public/storage
@@ -11,21 +12,27 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/.idea
+/.idea/
 /.vscode
 .phpstorm.meta.php
 _ide_helper.php
+_ide_helper.*.php
 phpunit.xml
 preload.php
 .phpunit.cache/
 
 /caddy
-frankenphp
+/frankenphp
 frankenphp-worker.php
 composer.lock
 
 **/caddy
 tests/KRTest.php
 
-.claude
+/.claude
 /tmpclaude-*
+/nul
+
+/storage/*.log
+/storage/pgsql/
+/storage/redis/

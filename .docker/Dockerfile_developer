@@ -16,15 +16,16 @@ RUN set -eux; \
     apk update; \
     #
     # Install build dependencies
-    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS && docker-php-source extract; \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; docker-php-source extract; \
     #
     # Install Chokidar
-    apk add --no-cache npm && npm install -g chokidar; \
+    apk add --no-cache npm; npm install -g chokidar; \
     #
     # Install Utils
     apk add --no-cache \
     vim curl subversion git wget procps busybox-extras iputils-ping apache2-utils bind-tools \
-    tcpdump tshark ngrep htop lsof iftop sysstat sysstat nmap psmisc traceroute strace; \
+    tcpdump tshark ngrep htop lsof iftop sysstat nmap psmisc traceroute strace \
+    gdb valgrind inotify-tools; \
     #
     # Install Httpstat
     apk add --no-cache curl; \
@@ -35,11 +36,30 @@ RUN set -eux; \
     # Install Httpflow \
     apk add --no-cache curl libpcap-dev zlib-dev make g++ libpcap-dev build-base gcc g++ pcre pcre-dev libc6-compat; \
     git clone https://github.com/six-ddc/httpflow /opt/httpflow; \
-    cd /opt/httpflow && make && make install; \
+    (cd /opt/httpflow && make && make install); \
     rm -rf /opt/httpflow; \
     #
+    # Install Xdebug
+    apk add --no-cache linux-headers; \
+    pecl install xdebug; docker-php-ext-enable xdebug; \
+    rm -rf /usr/local/etc/php/conf.d/*xdebug.ini; touch /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    { \
+        echo "zend_extension=xdebug"; \
+        echo "xdebug.mode=debug,profile ; 运行模式: debug (单步调试), profile (性能分析), develop (增强错误输出), coverage (代码覆盖率)"; \
+        echo "xdebug.start_with_request=trigger ; 启动方式: trigger (通过 XDEBUG_TRIGGER 触发), yes (每次请求自动触发)"; \
+        echo "xdebug.client_host=host.docker.internal ; IDE 监听地址 - host.docker.internal 自动指向宿主机"; \
+        echo "xdebug.client_port=9003 ; IDE 监听端口 (PhpStorm 默认 9003)"; \
+        echo "xdebug.connect_timeout_ms=200 ; 连接 IDE 超时时间 (毫秒)"; \
+        echo "xdebug.discover_client_host=false ; 是否在连接失败时发现其他 IDE 实例"; \
+        echo "xdebug.idekey=PHPSTORM ; IDE Key"; \
+        echo "xdebug.log=${LOG_PATH}/xdebug.log ; 调试日志路径"; \
+        echo "xdebug.log_level=3 ; 日志级别: 1 (错误), 3 (警告), 5 (通信), 7 (详细)"; \
+        echo "xdebug.output_dir=${APP_STORAGE_PATH}/profiler ; 性能分析文件输出目录"; \
+        echo "xdebug.profiler_output_name=xdebug.cachegrind.out.%t.%p.%R ; 文件名格式: %t (时间戳), %p (进程ID), %R (请求URI)"; \
+    } > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    #
     # Clear \
-    docker-php-source delete && pecl clear-cache && apk del --no-network .build-deps; \
+    docker-php-source delete; pecl clear-cache || true; apk del --no-network .build-deps; \
     rm -rf "/tmp/opcache/*" "${LOG_PATH}/*"
 
 CMD /usr/local/bin/php ${APP_BASE_PATH}/artisan serve

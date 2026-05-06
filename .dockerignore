@@ -4,3 +4,4 @@
 _ide_helper.php
 /qodana.yaml
 /vendor
+storage/logs/*
